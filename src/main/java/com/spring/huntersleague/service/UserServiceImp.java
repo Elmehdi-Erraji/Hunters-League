@@ -1,4 +1,4 @@
-package com.spring.huntersleague.service.Impl;
+package com.spring.huntersleague.service;
 
 public class UserServiceImp {
 }
