@@ -30,6 +30,7 @@ public class MemberController {
 
     @PostMapping
     public Member createMember(@RequestBody Member member) {
+        System.out.println("saving member" + member);
         return memberService.save(member);
     }
 

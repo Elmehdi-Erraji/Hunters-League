@@ -8,11 +8,11 @@ databaseChangeLog:
               columns:
                 - column:
                     name: id
-                    type: BIGINT
+                    type: BIGSERIAL
                     constraints:
                       primaryKey: true
                       nullable: false
-                      autoIncrement: true
+
                 - column:
                     name: first_name
                     type: VARCHAR(255)
