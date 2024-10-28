@@ -4,6 +4,7 @@ import com.spring.huntersleague.service.AuthService;
 import com.spring.huntersleague.service.Impl.AuthServiceImpl;
 import com.spring.huntersleague.service.dto.UserLoginDTO;
 import com.spring.huntersleague.service.dto.UserRegistrationDTO;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +23,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UserLoginDTO userLoginDTO) {
+    public ResponseEntity<String> login(@RequestBody @Valid UserLoginDTO userLoginDTO) {
         boolean isAuthenticated = authService.login(userLoginDTO);
         if (isAuthenticated) {
             return ResponseEntity.ok("Login successful");
@@ -31,8 +32,8 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody UserRegistrationDTO registrationDTO) {
+    public ResponseEntity<String> register(@RequestBody @Valid UserRegistrationDTO registrationDTO) {
         authService.register(registrationDTO);
-        return ResponseEntity.ok("User registerd successfully");
+        return ResponseEntity.ok("User registered successfully");
     }
 }
