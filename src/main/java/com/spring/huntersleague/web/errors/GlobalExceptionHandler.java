@@ -1,4 +1,4 @@
-package com.spring.huntersleague.exception;
+package com.spring.huntersleague.web.errors;
 
 
 import org.springframework.http.ResponseEntity;

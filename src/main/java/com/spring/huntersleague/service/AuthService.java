@@ -18,25 +18,15 @@ public class AuthService {
         this.authRepository = authRepository;
     }
 
-    public User register(UserRegistrationDTO registrationDTO) {
-        User user = new User();
-        user.setUsername(registrationDTO.getUsername());
-        user.setPassword(BCrypt.hashpw(registrationDTO.getPassword(), BCrypt.gensalt()));
-        user.setFirstName(registrationDTO.getFirstName());
-        user.setLastName(registrationDTO.getLastName());
-        user.setCin(registrationDTO.getCin());
-        user.setEmail(registrationDTO.getEmail());
-        user.setNationality(registrationDTO.getNationality());
-        user.setJoinDate(LocalDateTime.now());
-
+    public User register(User user) {
         return authRepository.save(user);
     }
 
-    public boolean login(UserLoginDTO loginDTO) {
-        User user = authRepository.findByUsername(loginDTO.getUsername())
+    public boolean login(User userLogin) {
+        User user = authRepository.findByUsername(userLogin.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("user not found"));
 
-        if(BCrypt.checkpw(loginDTO.getPassword(), user.getPassword())) {
+        if(BCrypt.checkpw(userLogin.getPassword(), user.getPassword())) {
             return true;
         }else{
             throw new IllegalArgumentException("Wrong password");
