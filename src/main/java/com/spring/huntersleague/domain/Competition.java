@@ -24,7 +24,6 @@ public class Competition {
     private String location;
 
     private LocalDateTime date;
-
     @Enumerated(EnumType.STRING)
     private SpeciesType speciesType;
 
