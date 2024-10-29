@@ -4,6 +4,7 @@ import com.spring.huntersleague.domain.User;
 import com.spring.huntersleague.repository.AuthRepository;
 import com.spring.huntersleague.service.dto.UserLoginDTO;
 import com.spring.huntersleague.service.dto.UserRegistrationDTO;
+import com.spring.huntersleague.web.errors.user.InvalidUserException;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,12 @@ public class AuthService {
     }
 
     public User register(User user) {
+        if(user == null || user.getUsername() == null || user.getPassword() == null || user.getEmail() == null || user.getPassword().length() < 8 ) {
+            throw new InvalidUserException("Invalid user");
+        }
+        if(authRepository.existsByEmail(user.getEmail()) || authRepository.existsByUsername(user.getUsername())) {
+            throw new InvalidUserException("User already exists");
+        }
         return authRepository.save(user);
     }
 
