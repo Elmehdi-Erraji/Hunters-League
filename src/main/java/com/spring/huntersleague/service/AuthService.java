@@ -4,7 +4,9 @@ import com.spring.huntersleague.domain.User;
 import com.spring.huntersleague.repository.AuthRepository;
 import com.spring.huntersleague.service.dto.UserLoginDTO;
 import com.spring.huntersleague.service.dto.UserRegistrationDTO;
+import com.spring.huntersleague.web.errors.user.InvalidCredentialsException;
 import com.spring.huntersleague.web.errors.user.InvalidUserException;
+import com.spring.huntersleague.web.errors.user.UserNotFoundException;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
@@ -31,12 +33,12 @@ public class AuthService {
 
     public boolean login(User userLogin) {
         User user = authRepository.findByUsername(userLogin.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("user not found"));
+                .orElseThrow(() -> new UserNotFoundException("user not found."));
 
         if(BCrypt.checkpw(userLogin.getPassword(), user.getPassword())) {
             return true;
         }else{
-            throw new IllegalArgumentException("Wrong password");
+            throw new InvalidCredentialsException("Invalid credentials.");
         }
     }
 }
