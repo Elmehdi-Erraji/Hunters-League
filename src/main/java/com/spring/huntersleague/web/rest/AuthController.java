@@ -1,6 +1,7 @@
 package com.spring.huntersleague.web.rest;
 
 import com.spring.huntersleague.domain.User;
+import com.spring.huntersleague.domain.enums.Role;
 import com.spring.huntersleague.service.AuthService;
 import com.spring.huntersleague.web.vm.UserLoginVM;
 import com.spring.huntersleague.web.vm.UserRegisterVM;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @RestController
@@ -45,6 +47,8 @@ public class AuthController {
         User user = userRegistrationMapper.toEntity(registrationVM);
         user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
         user.setJoinDate(LocalDateTime.now());
+        user.setRole(Role.MEMBER);
+        user.setLicenseExpirationDate(LocalDate.of(2026, 1, 1).atStartOfDay());
         authService.register(user);
         return ResponseEntity.ok("User registered successfully");
     }
