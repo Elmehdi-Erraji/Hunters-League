@@ -46,7 +46,7 @@ public class SpeciesController {
     public ResponseEntity<String> deleteSpecies(@PathVariable UUID id) {
         Optional<Species> species = speciesService.findById(id);
         if (species.isPresent()) {
-            speciesService.delete(species.get());
+            speciesService.delete(id);
             return ResponseEntity.ok("Species deleted successfully");
         } else {
             return ResponseEntity.notFound().build();

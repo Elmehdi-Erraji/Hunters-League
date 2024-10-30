@@ -36,7 +36,6 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody @Valid UserLoginVM userLoginVM) {
         User user = userLoginMapper.toEntity(userLoginVM);
-
         boolean isAuthenticated = authService.login(user);
         if (isAuthenticated) {
             return ResponseEntity.ok("Login successful");
