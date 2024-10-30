@@ -5,9 +5,8 @@ import com.spring.huntersleague.web.vm.UserRegisterVM;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface UserRegistrationMapper {
-    UserRegistrationMapper INSTANCE = Mappers.getMapper(UserRegistrationMapper.class);
 
     User toEntity(UserRegisterVM userRegistrationVM);
     UserRegisterVM toDto(User user);

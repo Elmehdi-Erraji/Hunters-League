@@ -24,11 +24,13 @@ import java.time.LocalDateTime;
 public class AuthController {
 
     private final AuthService authService;
-    private final UserRegistrationMapper userRegistrationMapper = UserRegistrationMapper.INSTANCE;
-    private final UserLoginMapper userLoginMapper = UserLoginMapper.INSTANCE;
+    private final UserRegistrationMapper userRegistrationMapper;
+    private final UserLoginMapper userLoginMapper;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService,UserLoginMapper userLoginMapper,UserRegistrationMapper userRegistrationMapper) {
         this.authService = authService;
+        this.userLoginMapper = userLoginMapper;
+        this.userRegistrationMapper = userRegistrationMapper;
     }
 
     @PostMapping("/login")

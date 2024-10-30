@@ -5,6 +5,7 @@ import com.spring.huntersleague.repository.SpeciesRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
@@ -20,13 +21,10 @@ public class SpeciesService {
         return speciesRepository.save(species);
     }
 
-    public Optional<Species> findById(int id) {
+    public Optional<Species> findById(UUID id) {
         return speciesRepository.findById(id);
     }
 
-    public Species update(Species species) {
-        return speciesRepository.save(species);
-    }
     public void delete(Species species) {
         speciesRepository.delete(species);
     }
