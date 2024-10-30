@@ -5,28 +5,26 @@ import com.spring.huntersleague.repository.CompetitionRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class CompetitionService {
 
-    private final CompetitionRepository competitionRepository;
+    private CompetitionRepository competitionRepository;
 
-    public CompetitionService(CompetitionRepository competitionRepository) {
-        this.competitionRepository = competitionRepository;
+    public Competition createCompetition(Competition competition) {
+        return competitionRepository.save(competition);
     }
 
-    public Optional<Competition> getCompetitionById(int id) {
+    public Competition updateCompetition(Competition competition) {
+        return competitionRepository.save(competition);
+    }
+
+    public Optional<Competition> getCompetitionById(UUID id) {
         return competitionRepository.findById(id);
     }
 
-    public Competition save(Competition competition) {
-        return competitionRepository.save(competition);
-    }
-    public Competition update(Competition competition) {
-        return competitionRepository.save(competition);
-    }
-
-    public void delete(Competition competition) {
-        competitionRepository.delete(competition);
+    public void deleteCompetition(UUID id) {
+        competitionRepository.deleteById(id);
     }
 }

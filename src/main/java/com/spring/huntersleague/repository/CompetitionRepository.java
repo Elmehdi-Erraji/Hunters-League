@@ -10,4 +10,6 @@ import java.util.UUID;
 @Repository
 public interface CompetitionRepository extends JpaRepository<Competition, Integer> {
     Optional<Competition> findById(UUID id);
+
+    void deleteById(UUID id);
 }
