@@ -29,8 +29,7 @@ databaseChangeLog:
         - sql:
             sql: |
               DELETE FROM hunt
-              WHERE id IN (SELECT hunt_id FROM species_hunt_mv WHERE species_id = :species_id);
-
+              WHERE id IN (SELECT hunt_id FROM species_hunt_mv WHERE species_id = ?);
   - changeSet:
       id: 004
       author: samurai
