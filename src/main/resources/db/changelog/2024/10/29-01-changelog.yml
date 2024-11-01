@@ -1,0 +1,42 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001
+      author: Youcode (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        # Create Materialized View for Species and Hunt
+        - sql:
+            sql: |
+              CREATE MATERIALIZED VIEW species_hunt_mv AS
+              SELECT h.id AS hunt_id, h.species_id, h.participation_id, h.weight
+              FROM hunt h
+              INNER JOIN species s ON h.species_id = s.id;
+
+  - changeSet:
+      id: 002
+      author: samurai
+      changes:
+        # Refresh Materialized View
+        - sql:
+            sql: |
+              REFRESH MATERIALIZED VIEW species_hunt_mv;
+
+  - changeSet:
+      id: 003
+      author: samurai
+      changes:
+        # Delete Records from Hunt Table using Materialized View
+        - sql:
+            sql: |
+              DELETE FROM hunt
+              WHERE id IN (SELECT hunt_id FROM species_hunt_mv WHERE species_id = :species_id);
+
+  - changeSet:
+      id: 004
+      author: samurai
+      changes:
+        # Delete Record from Species Table
+        - sql:
+            sql: |
+              DELETE FROM species
+              WHERE id = :species_id;

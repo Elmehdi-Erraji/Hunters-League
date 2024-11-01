@@ -1,6 +1,7 @@
 package com.spring.huntersleague.service;
 
 import com.spring.huntersleague.domain.Species;
+import com.spring.huntersleague.repository.HuntRepository;
 import com.spring.huntersleague.repository.SpeciesRepository;
 import com.spring.huntersleague.web.errors.species.DuplicateSpeciesException;
 import com.spring.huntersleague.web.errors.species.InvalidSpeciesException;
@@ -16,9 +17,11 @@ import java.util.UUID;
 public class SpeciesService {
 
     private final SpeciesRepository speciesRepository;
+    private final HuntRepository huntRepository;
 
-    public SpeciesService(SpeciesRepository speciesRepository) {
+    public SpeciesService(SpeciesRepository speciesRepository, HuntRepository huntRepository) {
         this.speciesRepository = speciesRepository;
+        this.huntRepository = huntRepository;
     }
 
     public Species save(Species species) {
@@ -49,6 +52,10 @@ public class SpeciesService {
             throw new SpeciesNotFoundException("Species with ID " + id + " not found.");
         }
 
+        // Step 1: Delete related hunts
+        huntRepository.deleteBySpeciesId(id); // Ensure this method is implemented in your repository
+
+        // Step 2: Delete the species itself
         speciesRepository.deleteById(id);
     }
 

@@ -1,4 +1,4 @@
-package com.spring.huntersleague.web.controller;
+package com.spring.huntersleague.web.rest;
 
 import com.spring.huntersleague.domain.Hunt;
 import com.spring.huntersleague.service.HuntService;
@@ -6,11 +6,9 @@ import com.spring.huntersleague.web.vm.HuntCreateVM;
 import com.spring.huntersleague.web.vm.HuntUpdateVM;
 import com.spring.huntersleague.web.vm.mapper.HuntCreateMapper;
 import com.spring.huntersleague.web.vm.mapper.HuntUpdateMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 

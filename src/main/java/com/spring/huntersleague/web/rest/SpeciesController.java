@@ -31,11 +31,11 @@ public class SpeciesController {
     @PostMapping("/create")
     public ResponseEntity<String> create(@RequestBody @Valid SpeciesCreateVM speciesCreateVM) {
         Species species = speciesCreateMapper.toEntity(speciesCreateVM);
-        speciesService.save(species);
-        return ResponseEntity.ok("Species registered successfully");
+        Species savedSpecies = speciesService.save(species);
+        UUID createdSpeciesId = savedSpecies.getId();
+        return ResponseEntity.ok("Species registered successfully with ID: " + createdSpeciesId);
     }
-
-    @GetMapping("/{id}")
+        @GetMapping("/{id}")
     public ResponseEntity<Species> getSpeciesById(@PathVariable UUID id) {
         Species species = speciesService.findById(id)
                 .orElseThrow(() -> new SpeciesNotFoundException("Species with ID not found"));
