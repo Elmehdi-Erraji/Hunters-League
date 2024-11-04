@@ -21,21 +21,4 @@ databaseChangeLog:
             sql: |
               REFRESH MATERIALIZED VIEW species_hunt_mv;
 
-  - changeSet:
-      id: 003
-      author: samurai
-      changes:
-        # Delete Records from Hunt Table using Materialized View
-        - sql:
-            sql: |
-              DELETE FROM hunt
-              WHERE id IN (SELECT hunt_id FROM species_hunt_mv WHERE species_id = ?);
-  - changeSet:
-      id: 004
-      author: samurai
-      changes:
-        # Delete Record from Species Table
-        - sql:
-            sql: |
-              DELETE FROM species
-              WHERE id = :species_id;
+  
