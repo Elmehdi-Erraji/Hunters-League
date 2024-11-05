@@ -8,11 +8,14 @@ import com.spring.huntersleague.web.vm.SpeciesUpdateVM;
 import com.spring.huntersleague.web.vm.mapper.SpeciesCreateMapper;
 import com.spring.huntersleague.web.vm.mapper.SpeciesUpdateMapper;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.awt.print.Pageable;
+import org.springframework.data.domain.Pageable;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -69,8 +72,13 @@ public class SpeciesController {
 
     @GetMapping("/findAll")
     public ResponseEntity<Page<Species>> getAllSpecies(Pageable pageable) {
-        Page<Species> speciesPage = speciesService.findAll((org.springframework.data.domain.Pageable) pageable);
-        return ResponseEntity.ok(speciesPage);
+        try {
+            Page<Species> speciesPage = speciesService.findAll(pageable);
+            return ResponseEntity.ok(speciesPage);
+        } catch (Exception e) {
+            System.err.println("Error occurred while fetching species: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
 }
