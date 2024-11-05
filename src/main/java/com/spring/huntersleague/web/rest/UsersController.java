@@ -3,17 +3,23 @@ package com.spring.huntersleague.web.rest;
 import com.spring.huntersleague.domain.User;
 import com.spring.huntersleague.service.UserService;
 import com.spring.huntersleague.web.errors.user.UserNotFoundException;
+import com.spring.huntersleague.web.vm.mapper.response.user.UserListMapper;
 import com.spring.huntersleague.web.vm.request.user.UserCreateVM;
 import com.spring.huntersleague.web.vm.request.user.UserUpdateVM;
 import com.spring.huntersleague.web.vm.mapper.request.user.UserCreateMapper;
 import com.spring.huntersleague.web.vm.mapper.request.user.UserUpdateMapper;
+import com.spring.huntersleague.web.vm.response.user.UserListVM;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -24,11 +30,13 @@ public class UsersController {
     private final UserService userService;
     private final UserCreateMapper userCreateMapper;
     private final UserUpdateMapper userUpdateMapper;
+    private final UserListMapper userListMapper;
 
-    public UsersController(UserService userService, UserCreateMapper userCreateMapper, UserUpdateMapper userUpdateMapper) {
+    public UsersController(UserService userService, UserCreateMapper userCreateMapper, UserUpdateMapper userUpdateMapper, UserListMapper userListMapper) {
         this.userService = userService;
         this.userCreateMapper = userCreateMapper;
         this.userUpdateMapper = userUpdateMapper;
+        this.userListMapper = userListMapper;
     }
 
     @PostMapping("/api/create")
@@ -51,7 +59,6 @@ public class UsersController {
         if (!id.equals(userUpdateVM.getId())) {
             return ResponseEntity.badRequest().build();
         }
-
         User user = userUpdateMapper.toEntity(userUpdateVM);
         User updatedUser = userService.update(user);
         return ResponseEntity.ok(updatedUser);
@@ -66,5 +73,16 @@ public class UsersController {
         } else {
             throw new UserNotFoundException("User not found with id: " + id);
         }
+    }
+
+    @GetMapping("/findAll")
+    public ResponseEntity<List<UserListVM>> getAllUsers(Pageable pageable) {
+        Page<User> userPage = userService.findAllUsers(pageable);
+
+        List<UserListVM> users = userPage.getContent().stream()
+                .map(userListMapper::toViewModel)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(users);
     }
 }

@@ -3,10 +3,12 @@ package com.spring.huntersleague.web.rest;
 import com.spring.huntersleague.domain.Species;
 import com.spring.huntersleague.service.SpeciesService;
 import com.spring.huntersleague.web.errors.species.SpeciesNotFoundException;
+import com.spring.huntersleague.web.vm.mapper.response.species.SpeciesListMapper;
 import com.spring.huntersleague.web.vm.request.species.SpeciesCreateVM;
 import com.spring.huntersleague.web.vm.request.species.SpeciesUpdateVM;
 import com.spring.huntersleague.web.vm.mapper.request.species.SpeciesCreateMapper;
 import com.spring.huntersleague.web.vm.mapper.request.species.SpeciesUpdateMapper;
+import com.spring.huntersleague.web.vm.response.species.SpeciesListVM;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -14,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,11 +28,13 @@ public class SpeciesController {
     private final SpeciesService speciesService;
     private final SpeciesCreateMapper speciesCreateMapper;
     private final SpeciesUpdateMapper speciesUpdateMapper;
+    private final SpeciesListMapper speciesListMapper;
 
-    public SpeciesController(SpeciesService speciesService, SpeciesCreateMapper speciesCreateMapper, SpeciesUpdateMapper speciesUpdateMapper) {
+    public SpeciesController(SpeciesService speciesService, SpeciesCreateMapper speciesCreateMapper, SpeciesUpdateMapper speciesUpdateMapper, SpeciesListMapper speciesListMapper) {
         this.speciesService = speciesService;
         this.speciesCreateMapper = speciesCreateMapper;
         this.speciesUpdateMapper = speciesUpdateMapper;
+        this.speciesListMapper = speciesListMapper;
     }
 
     @PostMapping("/create")
@@ -69,10 +75,13 @@ public class SpeciesController {
     }
 
     @GetMapping("/findAll")
-    public ResponseEntity<Page<Species>> getAllSpecies(Pageable pageable) {
+    public ResponseEntity<SpeciesListVM> getAllSpecies(Pageable pageable) {
         try {
             Page<Species> speciesPage = speciesService.findAll(pageable);
-            return ResponseEntity.ok(speciesPage);
+            List<Species> speciesVMList = speciesListMapper.toSpeciesVMList(speciesPage.getContent());
+
+            SpeciesListVM speciesListVM = new SpeciesListVM(speciesVMList);
+            return ResponseEntity.ok(speciesListVM);
         } catch (Exception e) {
             System.err.println("Error occurred while fetching species: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);

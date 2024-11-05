@@ -4,6 +4,9 @@ import com.spring.huntersleague.domain.User;
 import com.spring.huntersleague.repository.UserRepository;
 import com.spring.huntersleague.web.errors.user.UserAlreadyExistException;
 import com.spring.huntersleague.web.errors.user.UserNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,5 +55,9 @@ public class UserService {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new UserAlreadyExistException("Email " + user.getEmail() + " is already in use.");
         }
+    }
+
+    public Page<User> findAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 }

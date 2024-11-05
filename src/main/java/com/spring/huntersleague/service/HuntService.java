@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 public class HuntService {
@@ -34,5 +36,9 @@ public class HuntService {
 
     public void deleteHunt(UUID id) {
         huntRepository.deleteById(id);
+    }
+
+    public Page<Hunt> findAllHunts(Pageable pageable) {
+        return huntRepository.findAll(pageable);
     }
 }
