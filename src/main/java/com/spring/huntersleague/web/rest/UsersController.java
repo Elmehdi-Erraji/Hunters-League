@@ -4,6 +4,7 @@ import com.spring.huntersleague.domain.User;
 import com.spring.huntersleague.service.UserService;
 import com.spring.huntersleague.web.errors.user.UserNotFoundException;
 import com.spring.huntersleague.web.vm.mapper.response.user.UserListMapper;
+import com.spring.huntersleague.web.vm.request.user.SearchCriteria;
 import com.spring.huntersleague.web.vm.request.user.UserCreateVM;
 import com.spring.huntersleague.web.vm.request.user.UserUpdateVM;
 import com.spring.huntersleague.web.vm.mapper.request.user.UserCreateMapper;
@@ -46,7 +47,6 @@ public class UsersController {
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
-
     @GetMapping("/find/{id}")
     public ResponseEntity<User> getUserById(@PathVariable UUID id) {
         Optional<User> user = userService.findById(id);
@@ -78,11 +78,23 @@ public class UsersController {
     @GetMapping("/findAll")
     public ResponseEntity<List<UserListVM>> getAllUsers(Pageable pageable) {
         Page<User> userPage = userService.findAllUsers(pageable);
-
         List<UserListVM> users = userPage.getContent().stream()
                 .map(userListMapper::toViewModel)
                 .collect(Collectors.toList());
-
         return ResponseEntity.ok(users);
     }
+
+    @GetMapping("/search")
+    public List<UserListVM> searchUsers(@RequestParam(required = false) String username,
+                                        @RequestParam(required = false) String cin) {
+        SearchCriteria criteria = new SearchCriteria(username, cin);
+        Optional<List<User>> usersOpt = userService.searchUsers(criteria);
+
+        return usersOpt
+                .map(users -> users.stream()
+                        .map(userListMapper::toViewModel)
+                        .collect(Collectors.toList()))
+                .orElseGet(List::of);
+    }
+
 }

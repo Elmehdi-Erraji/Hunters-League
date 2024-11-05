@@ -4,12 +4,15 @@ import com.spring.huntersleague.domain.User;
 import com.spring.huntersleague.repository.UserRepository;
 import com.spring.huntersleague.web.errors.user.UserAlreadyExistException;
 import com.spring.huntersleague.web.errors.user.UserNotFoundException;
+import com.spring.huntersleague.web.vm.request.user.SearchCriteria;
+import org.springframework.core.annotation.MergedAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -59,5 +62,9 @@ public class UserService {
 
     public Page<User> findAllUsers(Pageable pageable) {
         return userRepository.findAll(pageable);
+    }
+
+    public Optional<List<User>> searchUsers(SearchCriteria criteria) {
+        return Optional.ofNullable(userRepository.searchByCriteria(criteria.getUsername(), criteria.getCin()));
     }
 }
