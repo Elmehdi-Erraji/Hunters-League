@@ -2,11 +2,10 @@ package com.spring.huntersleague.web.rest;
 
 import com.spring.huntersleague.domain.Competition;
 import com.spring.huntersleague.service.CompetitionService;
-import com.spring.huntersleague.web.vm.CompetitionCreateVM;
-import com.spring.huntersleague.web.vm.CompetitionUpdateVM;
-import com.spring.huntersleague.web.vm.mapper.CompetitionCreateMapper;
-import com.spring.huntersleague.web.vm.mapper.CompetitionUpdateMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.spring.huntersleague.web.vm.request.competition.CompetitionCreateVM;
+import com.spring.huntersleague.web.vm.request.competition.CompetitionUpdateVM;
+import com.spring.huntersleague.web.vm.mapper.request.competition.CompetitionCreateMapper;
+import com.spring.huntersleague.web.vm.mapper.request.competition.CompetitionUpdateMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,14 +1,19 @@
-package com.spring.huntersleague.web.vm;
+package com.spring.huntersleague.web.vm.request.user;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @Data
-public class UserCreateVM {
+public class UserUpdateVM {
+
+    @NotNull(message = "ID is required")
+    private UUID id;
 
     @NotBlank(message = "Username is required")
     private String username;
@@ -27,7 +32,7 @@ public class UserCreateVM {
     @NotBlank(message = "Last name is required")
     private String lastName;
 
-    @NotNull(message = "User role is required")
+    @NotBlank(message = "User role is required")
     private String role;
 
     @NotBlank(message = "CIN is required")

@@ -1,4 +1,4 @@
-package com.spring.huntersleague.web.vm;
+package com.spring.huntersleague.web.vm.request.competition;
 
 import com.spring.huntersleague.domain.enums.SpeciesType;
 import jakarta.validation.constraints.*;
@@ -6,14 +6,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Getter
 @Setter
-public class CompetitionUpdateVM {
-
-    @NotNull(message = "ID is required")
-    private UUID id;
+public class CompetitionCreateVM {
 
     @NotBlank(message = "Code is required")
     private String code;

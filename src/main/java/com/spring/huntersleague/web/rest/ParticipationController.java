@@ -2,10 +2,10 @@ package com.spring.huntersleague.web.rest;
 
 import com.spring.huntersleague.domain.Participation;
 import com.spring.huntersleague.service.ParticipationService;
-import com.spring.huntersleague.web.vm.ParticipationCreateVM;
-import com.spring.huntersleague.web.vm.ParticipationUpdateVM;
-import com.spring.huntersleague.web.vm.mapper.ParticipationCreateMapper;
-import com.spring.huntersleague.web.vm.mapper.ParticipationUpdateMapper;
+import com.spring.huntersleague.web.vm.request.participation.ParticipationCreateVM;
+import com.spring.huntersleague.web.vm.request.participation.ParticipationUpdateVM;
+import com.spring.huntersleague.web.vm.mapper.request.participation.ParticipationCreateMapper;
+import com.spring.huntersleague.web.vm.mapper.request.participation.ParticipationUpdateMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

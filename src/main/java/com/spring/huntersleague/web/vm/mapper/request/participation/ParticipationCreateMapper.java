@@ -1,7 +1,7 @@
-package com.spring.huntersleague.web.vm.mapper;
+package com.spring.huntersleague.web.vm.mapper.request.participation;
 
 import com.spring.huntersleague.domain.Participation;
-import com.spring.huntersleague.web.vm.ParticipationCreateVM;
+import com.spring.huntersleague.web.vm.request.participation.ParticipationCreateVM;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

@@ -1,25 +1,17 @@
 package com.spring.huntersleague.web.rest;
 
-import com.spring.huntersleague.domain.Species;
 import com.spring.huntersleague.domain.User;
-import com.spring.huntersleague.domain.enums.Role;
 import com.spring.huntersleague.service.UserService;
-import com.spring.huntersleague.web.errors.species.SpeciesNotFoundException;
 import com.spring.huntersleague.web.errors.user.UserNotFoundException;
-import com.spring.huntersleague.web.vm.SpeciesUpdateVM;
-import com.spring.huntersleague.web.vm.UserCreateVM;
-import com.spring.huntersleague.web.vm.UserUpdateVM;
-import com.spring.huntersleague.web.vm.mapper.UserCreateMapper;
-import com.spring.huntersleague.web.vm.mapper.UserUpdateMapper;
+import com.spring.huntersleague.web.vm.request.user.UserCreateVM;
+import com.spring.huntersleague.web.vm.request.user.UserUpdateVM;
+import com.spring.huntersleague.web.vm.mapper.request.user.UserCreateMapper;
+import com.spring.huntersleague.web.vm.mapper.request.user.UserUpdateMapper;
 import jakarta.validation.Valid;
-import jakarta.websocket.server.PathParam;
-import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 

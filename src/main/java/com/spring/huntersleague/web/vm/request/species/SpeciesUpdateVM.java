@@ -1,17 +1,19 @@
-package com.spring.huntersleague.web.vm;
+package com.spring.huntersleague.web.vm.request.species;
 
-import com.spring.huntersleague.domain.enums.Difficulty;
-import com.spring.huntersleague.domain.enums.SpeciesType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import java.util.UUID;
 
 @Setter
 @Getter
-public class SpeciesCreateVM {
+public class SpeciesUpdateVM {
+
+    @NotNull(message = "ID is required")
+    private UUID id;
 
     @NotBlank(message = "Name is required")
     @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")

@@ -1,18 +1,14 @@
-package com.spring.huntersleague.web.vm;
+package com.spring.huntersleague.web.vm.request.user;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-
-@Setter
 @Getter
+@Setter
 @Data
-public class UserRegisterVM {
+public class UserCreateVM {
 
     @NotBlank(message = "Username is required")
     private String username;
@@ -30,6 +26,9 @@ public class UserRegisterVM {
 
     @NotBlank(message = "Last name is required")
     private String lastName;
+
+    @NotNull(message = "User role is required")
+    private String role;
 
     @NotBlank(message = "CIN is required")
     private String cin;

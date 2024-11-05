@@ -1,4 +1,4 @@
-package com.spring.huntersleague.web.vm;
+package com.spring.huntersleague.web.vm.request.participation;
 
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -8,10 +8,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public class ParticipationUpdateVM {
-
-    @NotNull(message = "ID is required")
-    private UUID id;
+public class ParticipationCreateVM {
 
     @NotNull(message = "User ID is required")
     private UUID userId;

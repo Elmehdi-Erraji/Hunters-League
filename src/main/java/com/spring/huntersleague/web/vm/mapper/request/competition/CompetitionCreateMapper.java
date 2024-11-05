@@ -1,8 +1,8 @@
-package com.spring.huntersleague.web.vm.mapper;
+package com.spring.huntersleague.web.vm.mapper.request.competition;
 
 import com.spring.huntersleague.domain.Competition;
 import com.spring.huntersleague.domain.enums.SpeciesType;
-import com.spring.huntersleague.web.vm.CompetitionCreateVM;
+import com.spring.huntersleague.web.vm.request.competition.CompetitionCreateVM;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

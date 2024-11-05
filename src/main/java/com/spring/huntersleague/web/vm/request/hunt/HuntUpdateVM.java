@@ -1,4 +1,4 @@
-package com.spring.huntersleague.web.vm;
+package com.spring.huntersleague.web.vm.request.hunt;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -8,7 +8,10 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public class HuntCreateVM {
+public class HuntUpdateVM {
+
+    @NotNull(message = "ID is required")
+    private UUID id;
 
     @NotNull(message = "Species ID is required")
     private UUID speciesId;

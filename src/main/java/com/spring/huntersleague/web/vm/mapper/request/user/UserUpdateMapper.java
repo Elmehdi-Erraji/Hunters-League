@@ -1,8 +1,8 @@
-package com.spring.huntersleague.web.vm.mapper;
+package com.spring.huntersleague.web.vm.mapper.request.user;
 
 import com.spring.huntersleague.domain.User;
 import com.spring.huntersleague.domain.enums.Role;
-import com.spring.huntersleague.web.vm.UserUpdateVM;
+import com.spring.huntersleague.web.vm.request.user.UserUpdateVM;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

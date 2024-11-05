@@ -1,7 +1,7 @@
-package com.spring.huntersleague.web.vm.mapper;
+package com.spring.huntersleague.web.vm.mapper.request.species;
 
 import com.spring.huntersleague.domain.Species;
-import com.spring.huntersleague.web.vm.SpeciesUpdateVM;
+import com.spring.huntersleague.web.vm.request.species.SpeciesUpdateVM;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

@@ -1,9 +1,8 @@
-package com.spring.huntersleague.web.vm.mapper;
+package com.spring.huntersleague.web.vm.mapper.request.user;
 
 import com.spring.huntersleague.domain.User;
-import com.spring.huntersleague.web.vm.UserRegisterVM;
+import com.spring.huntersleague.web.vm.request.user.UserRegisterVM;
 import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
 public interface UserRegistrationMapper {

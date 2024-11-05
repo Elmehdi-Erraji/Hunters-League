@@ -1,8 +1,7 @@
-package com.spring.huntersleague.web.vm.mapper;
+package com.spring.huntersleague.web.vm.mapper.request.user;
 
 import com.spring.huntersleague.domain.User;
-import com.spring.huntersleague.service.dto.UserLoginDTO;
-import com.spring.huntersleague.web.vm.UserLoginVM;
+import com.spring.huntersleague.web.vm.request.user.UserLoginVM;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
