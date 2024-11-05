@@ -2,9 +2,11 @@ package com.spring.huntersleague.repository;
 
 import com.spring.huntersleague.domain.Species;
 import jakarta.transaction.Transactional;
+import org.hibernate.query.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.awt.print.Pageable;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,4 +20,5 @@ public interface SpeciesRepository extends JpaRepository<Species, Integer> {
     boolean existsByName(String name);
 
     boolean existsById(UUID id);
+
 }

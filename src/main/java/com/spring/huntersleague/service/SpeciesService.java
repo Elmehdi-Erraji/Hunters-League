@@ -9,6 +9,9 @@ import com.spring.huntersleague.web.errors.species.SpeciesNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.Optional;
 import java.util.UUID;
 
@@ -41,6 +44,10 @@ public class SpeciesService {
 
         return Optional.ofNullable(speciesRepository.findById(id)
                 .orElseThrow(() -> new SpeciesNotFoundException("Species with ID " + id + " not found.")));
+    }
+
+    public Page<Species> findAll(Pageable pageable) {
+        return speciesRepository.findAll(pageable);
     }
 
     @Transactional

@@ -8,9 +8,11 @@ import com.spring.huntersleague.web.vm.SpeciesUpdateVM;
 import com.spring.huntersleague.web.vm.mapper.SpeciesCreateMapper;
 import com.spring.huntersleague.web.vm.mapper.SpeciesUpdateMapper;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.print.Pageable;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -63,6 +65,12 @@ public class SpeciesController {
 
         speciesService.save(updatedSpecies);
         return ResponseEntity.ok("Species updated successfully");
+    }
+
+    @GetMapping("/findAll")
+    public ResponseEntity<Page<Species>> getAllSpecies(Pageable pageable) {
+        Page<Species> speciesPage = speciesService.findAll((org.springframework.data.domain.Pageable) pageable);
+        return ResponseEntity.ok(speciesPage);
     }
 
 }
