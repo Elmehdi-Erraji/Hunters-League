@@ -8,8 +8,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface CompetitionRepository extends JpaRepository<Competition, Integer> {
-    Optional<Competition> findById(UUID id);
-
+public interface CompetitionRepository extends JpaRepository<Competition, UUID> {
     void deleteById(UUID id);
 }

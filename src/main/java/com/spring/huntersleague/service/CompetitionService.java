@@ -3,6 +3,7 @@ package com.spring.huntersleague.service;
 import com.spring.huntersleague.domain.Competition;
 import com.spring.huntersleague.domain.Hunt;
 import com.spring.huntersleague.repository.CompetitionRepository;
+import com.spring.huntersleague.web.errors.competitions.CompetitionNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,11 @@ import java.util.UUID;
 @Service
 public class CompetitionService {
 
-    private CompetitionRepository competitionRepository;
+    private final CompetitionRepository competitionRepository;
+
+    public CompetitionService(CompetitionRepository competitionRepository) {
+        this.competitionRepository = competitionRepository;
+    }
 
     public Competition createCompetition(Competition competition) {
         return competitionRepository.save(competition);
@@ -23,7 +28,7 @@ public class CompetitionService {
         return competitionRepository.save(competition);
     }
 
-    public Optional<Competition> getCompetitionById(UUID id) {
+    public Optional<Competition> findById(UUID id) {
         return competitionRepository.findById(id);
     }
 
