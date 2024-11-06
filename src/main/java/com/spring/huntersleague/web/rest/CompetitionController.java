@@ -1,10 +1,7 @@
 package com.spring.huntersleague.web.rest;
 
 import com.spring.huntersleague.domain.Competition;
-import com.spring.huntersleague.domain.Hunt;
 import com.spring.huntersleague.service.CompetitionService;
-import com.spring.huntersleague.web.errors.competitions.CompetitionNotFoundException;
-import com.spring.huntersleague.web.errors.user.UserNotFoundException;
 import com.spring.huntersleague.web.vm.mapper.response.competition.CompetitionListMapper;
 import com.spring.huntersleague.web.vm.mapper.response.competition.CompetitionMapper;
 import com.spring.huntersleague.web.vm.request.competition.CompetitionCreateVM;
@@ -13,8 +10,6 @@ import com.spring.huntersleague.web.vm.mapper.request.competition.CompetitionCre
 import com.spring.huntersleague.web.vm.mapper.request.competition.CompetitionUpdateMapper;
 import com.spring.huntersleague.web.vm.response.competition.CompetitionDetailsVM;
 import com.spring.huntersleague.web.vm.response.competition.CompetitionListVM;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -60,10 +55,12 @@ public class CompetitionController {
 
     @GetMapping("/find/{id}")
     public ResponseEntity<CompetitionDetailsVM> getCompetitionId(@PathVariable UUID id) {
-        Optional<Competition> competitionOpt = competitionService.findById(id);
-        return competitionOpt
-                .map(competition -> ResponseEntity.ok(competitionMapper.toViewModel(competition)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        Optional<Competition> competition = competitionService.findById(id);
+        return competition.map(comp -> {
+            CompetitionDetailsVM vm = competitionMapper.toViewModel(comp);
+            vm.setParticipantCount(comp.getParticipations() != null ? comp.getParticipations().size() : 0);
+            return ResponseEntity.ok(vm);
+        }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/delete/{id}")

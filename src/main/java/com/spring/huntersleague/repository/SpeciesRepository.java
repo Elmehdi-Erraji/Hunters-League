@@ -4,6 +4,9 @@ import com.spring.huntersleague.domain.Species;
 import jakarta.transaction.Transactional;
 import org.hibernate.query.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.awt.print.Pageable;
@@ -20,5 +23,12 @@ public interface SpeciesRepository extends JpaRepository<Species, Integer> {
     boolean existsByName(String name);
 
     boolean existsById(UUID id);
+
+
+    @Modifying
+    @Query("DELETE FROM Hunt h WHERE h.species.id = :speciesId")
+    void deleteHuntsBySpeciesId(@Param("speciesId") UUID speciesId);
+
+
 
 }

@@ -9,6 +9,7 @@ import com.spring.huntersleague.web.vm.request.species.SpeciesUpdateVM;
 import com.spring.huntersleague.web.vm.mapper.request.species.SpeciesCreateMapper;
 import com.spring.huntersleague.web.vm.mapper.request.species.SpeciesUpdateMapper;
 import com.spring.huntersleague.web.vm.response.species.SpeciesListVM;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -55,12 +56,14 @@ public class SpeciesController {
     public ResponseEntity<String> deleteSpecies(@PathVariable UUID id) {
         Optional<Species> species = speciesService.findById(id);
         if (species.isPresent()) {
-            speciesService.delete(id);
-            return ResponseEntity.ok("Species deleted successfully");
+            speciesService.updateHuntsAndDeleteSpecies(id);  // Updates hunts and deletes species
+            return ResponseEntity.ok("Species updated and deleted successfully");
         } else {
             return ResponseEntity.notFound().build();
         }
     }
+
+
 
     @PostMapping("/update/{id}")
     public ResponseEntity<String> update(@PathVariable UUID id, @Valid @RequestBody SpeciesUpdateVM speciesUpdateVM) {
