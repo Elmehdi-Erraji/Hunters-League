@@ -5,11 +5,13 @@ import com.spring.huntersleague.service.CompetitionService;
 import com.spring.huntersleague.web.vm.mapper.response.competition.CompetitionListMapper;
 import com.spring.huntersleague.web.vm.mapper.response.competition.CompetitionMapper;
 import com.spring.huntersleague.web.vm.request.competition.CompetitionCreateVM;
+import com.spring.huntersleague.web.vm.request.competition.CompetitionRegisterVM;
 import com.spring.huntersleague.web.vm.request.competition.CompetitionUpdateVM;
 import com.spring.huntersleague.web.vm.mapper.request.competition.CompetitionCreateMapper;
 import com.spring.huntersleague.web.vm.mapper.request.competition.CompetitionUpdateMapper;
 import com.spring.huntersleague.web.vm.response.competition.CompetitionDetailsVM;
 import com.spring.huntersleague.web.vm.response.competition.CompetitionListVM;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -77,4 +79,14 @@ public class CompetitionController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(competitions);
     }
+
+
+    @PostMapping("/register/{id}")
+    public ResponseEntity<String> registerForCompetition(@PathVariable UUID id,
+                                                         @Valid @RequestBody CompetitionRegisterVM registerVM) {
+        competitionService.registerMember(id, registerVM.getMemberID());
+
+        return ResponseEntity.ok("Member registered successfully.");
+    }
+
 }
