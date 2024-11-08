@@ -1,4 +1,4 @@
-package com.spring.huntersleague.web.vm;
+package com.spring.huntersleague.web.vm.request.user;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
