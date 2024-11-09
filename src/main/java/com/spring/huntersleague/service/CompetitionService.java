@@ -1,13 +1,10 @@
 package com.spring.huntersleague.service;
 
-import com.spring.huntersleague.domain.Competition;
-import com.spring.huntersleague.domain.Hunt;
-import com.spring.huntersleague.domain.Participation;
-import com.spring.huntersleague.domain.User;
+import com.spring.huntersleague.domain.*;
 import com.spring.huntersleague.domain.enums.Role;
 import com.spring.huntersleague.repository.CompetitionRepository;
 import com.spring.huntersleague.repository.ParticipationRepository;
-import com.spring.huntersleague.web.errors.competitions.CompetitionNotFoundException;
+import com.spring.huntersleague.web.vm.request.competition.ScoreSubmissionRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -22,11 +19,17 @@ public class CompetitionService {
     private final CompetitionRepository competitionRepository;
     private final UserService userService;
     private final ParticipationRepository participationRepository;
+    private final HuntService huntService;
+    private final SpeciesService speciesService;
+    private final ParticipationService participationService;
 
-    public CompetitionService(CompetitionRepository competitionRepository, UserService userService, ParticipationRepository participationRepository) {
+    public CompetitionService(CompetitionRepository competitionRepository, UserService userService, ParticipationRepository participationRepository, HuntService huntService, SpeciesService speciesService, ParticipationService participationService) {
         this.competitionRepository = competitionRepository;
         this.userService = userService;
         this.participationRepository = participationRepository;
+        this.huntService = huntService;
+        this.speciesService = speciesService;
+        this.participationService = participationService;
     }
 
     public Competition createCompetition(Competition competition) {
@@ -70,4 +73,80 @@ public class CompetitionService {
         competition.getParticipations().add(participation);
         competitionRepository.save(competition);
     }
+
+    public boolean isJury(UUID id) {
+        return userService.findById(id)
+                .map(user -> user.getRole() == Role.JURY)
+                .orElse(false);
+    }
+
+
+
+    public void submitScores(ScoreSubmissionRequest request) {
+        double totalScore = 0;
+
+        Participation participation = participationService.getParticipationById(request.getParticipationId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid participation ID"));
+
+        // Verify that the participant ID matches the one associated with the participation
+        if (!participation.getUser().getId().equals(request.getParticipantId())) {
+            throw new IllegalArgumentException("Participant ID does not match the participation");
+        }
+
+        // Process each hunt entry
+        for (ScoreSubmissionRequest.HuntEntry huntEntry : request.getHunts()) {
+            Species species = speciesService.findById(huntEntry.getSpeciesId())
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid species ID"));
+
+            // Calculate the weight factor based on species category
+            double weightFactor;
+            switch (species.getCategory()) {
+                case BIG_GAME:
+                    weightFactor = 3;
+                    break;
+                case BIRD:
+                    weightFactor = 9;
+                    break;
+                case SEA:
+                    weightFactor = 5;
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown species type");
+            }
+
+            // Calculate the difficulty factor
+            double difficultyFactor;
+            switch (species.getDifficulty()) {
+                case COMMON:
+                    difficultyFactor = 1;
+                    break;
+                case RARE:
+                    difficultyFactor = 2;
+                    break;
+                case EPIC:
+                    difficultyFactor = 3;
+                    break;
+                case LEGENDARY:
+                    difficultyFactor = 5;
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown difficulty level");
+            }
+
+            // Calculate the total score for the hunt entry
+            totalScore += (species.getPoints() + (huntEntry.getWeight() * weightFactor)) * difficultyFactor;
+
+            // Create and save the Hunt record using the HuntService
+            Hunt hunt = new Hunt();
+            hunt.setParticipation(participation);
+            hunt.setSpecies(species);
+            hunt.setWeight(huntEntry.getWeight());
+            huntService.createHunt(hunt);
+        }
+
+        participation.setScore(totalScore);
+        participationService.updateParticipation(participation);
+    }
+
+
 }

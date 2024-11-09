@@ -13,9 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -37,10 +35,15 @@ public class ParticipationController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Participation> createParticipation(@RequestBody ParticipationCreateVM participationCreateVM) {
+    public ResponseEntity<Map<String, Object>> createParticipation(@RequestBody ParticipationCreateVM participationCreateVM) {
         Participation participation = participationCreateMapper.toEntity(participationCreateVM);
-        return ResponseEntity.ok(participationService.createParticipation(participation));
+        Participation createdParticipation = participationService.createParticipation(participation);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("id", createdParticipation.getId());
+        return ResponseEntity.ok(response);
     }
+
 
     @PostMapping("/update/{id}")
     public ResponseEntity<Participation> updateParticipation(@RequestBody ParticipationUpdateVM participationUpdateVM) {

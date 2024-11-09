@@ -16,5 +16,5 @@ public class ParticipationCreateVM {
     @NotNull(message = "Competition ID is required")
     private UUID competitionId;
 
-    private Double score;
+    private Double score = 0.0;
 }

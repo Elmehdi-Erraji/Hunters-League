@@ -9,11 +9,13 @@ import com.spring.huntersleague.web.vm.request.competition.CompetitionRegisterVM
 import com.spring.huntersleague.web.vm.request.competition.CompetitionUpdateVM;
 import com.spring.huntersleague.web.vm.mapper.request.competition.CompetitionCreateMapper;
 import com.spring.huntersleague.web.vm.mapper.request.competition.CompetitionUpdateMapper;
+import com.spring.huntersleague.web.vm.request.competition.ScoreSubmissionRequest;
 import com.spring.huntersleague.web.vm.response.competition.CompetitionDetailsVM;
 import com.spring.huntersleague.web.vm.response.competition.CompetitionListVM;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -85,8 +87,19 @@ public class CompetitionController {
     public ResponseEntity<String> registerForCompetition(@PathVariable UUID id,
                                                          @Valid @RequestBody CompetitionRegisterVM registerVM) {
         competitionService.registerMember(id, registerVM.getMemberID());
-
         return ResponseEntity.ok("Member registered successfully.");
+    }
+
+
+    @PostMapping("/submitScores")
+    public ResponseEntity<String> submitScores(@RequestBody ScoreSubmissionRequest scoreSubmissionRequest) {
+
+        if (!competitionService.isJury(scoreSubmissionRequest.getJuryUserId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized: Only jury members can submit scores.");
+        }
+
+        competitionService.submitScores(scoreSubmissionRequest);
+        return ResponseEntity.ok("Scores recorded successfully.");
     }
 
 }
