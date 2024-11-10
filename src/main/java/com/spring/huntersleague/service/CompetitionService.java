@@ -5,13 +5,14 @@ import com.spring.huntersleague.domain.enums.Role;
 import com.spring.huntersleague.repository.CompetitionRepository;
 import com.spring.huntersleague.repository.ParticipationRepository;
 import com.spring.huntersleague.web.vm.request.competition.ScoreSubmissionRequest;
+import com.spring.huntersleague.web.vm.response.competition.CompetitionResultVM;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CompetitionService {
@@ -80,8 +81,6 @@ public class CompetitionService {
                 .orElse(false);
     }
 
-
-
     public void submitScores(ScoreSubmissionRequest request) {
         double totalScore = 0;
 
@@ -147,6 +146,34 @@ public class CompetitionService {
         participation.setScore(totalScore);
         participationService.updateParticipation(participation);
     }
+
+
+    public List<CompetitionResultVM> getCompetitionResults(UUID userId) {
+        // Fetch the list of participations by user, ordered by competition date
+        List<Participation> participations = participationRepository.findByUserIdOrderByCompetitionDateDesc(userId);
+
+        // Group by competition, sum scores, and map to CompetitionResultVM
+        Map<UUID, CompetitionResultVM> resultMap = participations.stream()
+                .collect(Collectors.toMap(
+                        participation -> participation.getCompetition().getId(),
+                        participation -> new CompetitionResultVM(
+                                participation.getCompetition().getId(),
+                                participation.getScore(),
+                                participation.getCompetition().getDate()
+                        ),
+                        (existing, update) -> {
+                            // Sum scores if there are multiple participations in the same competition
+                            double newScore = existing.getScore() + update.getScore();
+                            existing.setScore(newScore); // Now this should work correctly
+                            return existing;
+                        }
+                ));
+
+        // Convert map values to a list
+        return new ArrayList<>(resultMap.values());
+    }
+
+
 
 
 }

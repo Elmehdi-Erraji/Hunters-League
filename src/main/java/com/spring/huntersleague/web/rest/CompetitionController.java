@@ -12,6 +12,7 @@ import com.spring.huntersleague.web.vm.mapper.request.competition.CompetitionUpd
 import com.spring.huntersleague.web.vm.request.competition.ScoreSubmissionRequest;
 import com.spring.huntersleague.web.vm.response.competition.CompetitionDetailsVM;
 import com.spring.huntersleague.web.vm.response.competition.CompetitionListVM;
+import com.spring.huntersleague.web.vm.response.competition.CompetitionResultVM;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -82,14 +83,11 @@ public class CompetitionController {
         return ResponseEntity.ok(competitions);
     }
 
-
     @PostMapping("/register/{id}")
-    public ResponseEntity<String> registerForCompetition(@PathVariable UUID id,
-                                                         @Valid @RequestBody CompetitionRegisterVM registerVM) {
+    public ResponseEntity<String> registerForCompetition(@PathVariable UUID id, @Valid @RequestBody CompetitionRegisterVM registerVM) {
         competitionService.registerMember(id, registerVM.getMemberID());
         return ResponseEntity.ok("Member registered successfully.");
     }
-
 
     @PostMapping("/submitScores")
     public ResponseEntity<String> submitScores(@RequestBody ScoreSubmissionRequest scoreSubmissionRequest) {
@@ -97,9 +95,17 @@ public class CompetitionController {
         if (!competitionService.isJury(scoreSubmissionRequest.getJuryUserId())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized: Only jury members can submit scores.");
         }
-
         competitionService.submitScores(scoreSubmissionRequest);
         return ResponseEntity.ok("Scores recorded successfully.");
     }
 
+
+    @GetMapping("/{userId}/competitionResults")
+    public ResponseEntity<List<CompetitionResultVM>> getCompetitionResults(@PathVariable UUID userId) {
+        List<CompetitionResultVM> results = competitionService.getCompetitionResults(userId);
+        if (results.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(results);
+        }
+        return ResponseEntity.ok(results);
+    }
 }
