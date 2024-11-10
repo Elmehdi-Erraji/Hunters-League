@@ -4,9 +4,12 @@ import com.spring.huntersleague.domain.*;
 import com.spring.huntersleague.domain.enums.Role;
 import com.spring.huntersleague.repository.CompetitionRepository;
 import com.spring.huntersleague.repository.ParticipationRepository;
+import com.spring.huntersleague.repository.dto.PodiumDto;
 import com.spring.huntersleague.web.vm.request.competition.ScoreSubmissionRequest;
 import com.spring.huntersleague.web.vm.response.competition.CompetitionResultVM;
+import com.spring.huntersleague.web.vm.response.competition.PodiumVM;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -171,6 +174,10 @@ public class CompetitionService {
 
         // Convert map values to a list
         return new ArrayList<>(resultMap.values());
+    }
+
+    public List<PodiumDto> getTopThreeParticipants(UUID competitionId) {
+        return participationRepository.findTopThreeByCompetitionId(competitionId, PageRequest.of(0, 3));
     }
 
 

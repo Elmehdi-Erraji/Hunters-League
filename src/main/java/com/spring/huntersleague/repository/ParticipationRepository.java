@@ -1,6 +1,8 @@
 package com.spring.huntersleague.repository;
 
 import com.spring.huntersleague.domain.Participation;
+import com.spring.huntersleague.repository.dto.PodiumDto;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -21,4 +23,9 @@ public interface ParticipationRepository extends JpaRepository<Participation, In
     List<Participation> findByUserIdOrderByCompetitionDateDesc(UUID userId);
 
 
+    @Query("SELECT new com.spring.huntersleague.repository.dto.PodiumDto(p.user.id, p.user.username, p.score) " +
+            "FROM Participation p " +
+            "WHERE p.competition.id = :competitionId " +
+            "ORDER BY p.score DESC")
+    List<PodiumDto> findTopThreeByCompetitionId(UUID competitionId, Pageable pageable);
 }
