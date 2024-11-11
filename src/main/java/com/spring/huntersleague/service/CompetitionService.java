@@ -6,6 +6,7 @@ import com.spring.huntersleague.repository.CompetitionRepository;
 import com.spring.huntersleague.repository.ParticipationRepository;
 import com.spring.huntersleague.repository.dto.CompetitionHistoryDTO;
 import com.spring.huntersleague.repository.dto.PodiumDto;
+import com.spring.huntersleague.repository.dto.mapper.CompetitionHistoryMapper;
 import com.spring.huntersleague.web.vm.request.competition.ScoreSubmissionRequest;
 import com.spring.huntersleague.web.vm.response.competition.CompetitionResultVM;
 import org.springframework.data.domain.Page;
@@ -26,14 +27,16 @@ public class CompetitionService {
     private final HuntService huntService;
     private final SpeciesService speciesService;
     private final ParticipationService participationService;
+    private final CompetitionHistoryMapper mapper;
 
-    public CompetitionService(CompetitionRepository competitionRepository, UserService userService, ParticipationRepository participationRepository, HuntService huntService, SpeciesService speciesService, ParticipationService participationService) {
+    public CompetitionService(CompetitionRepository competitionRepository, UserService userService, ParticipationRepository participationRepository, HuntService huntService, SpeciesService speciesService, ParticipationService participationService, CompetitionHistoryMapper mapper1, CompetitionHistoryMapper mapper) {
         this.competitionRepository = competitionRepository;
         this.userService = userService;
         this.participationRepository = participationRepository;
         this.huntService = huntService;
         this.speciesService = speciesService;
         this.participationService = participationService;
+        this.mapper = mapper;
     }
 
     public Competition createCompetition(Competition competition) {
@@ -182,23 +185,10 @@ public class CompetitionService {
 
 
     public List<CompetitionHistoryDTO> getUserCompetitionRankings(UUID userId) {
-        // Fetch raw data from repository
-        List<CompetitionHistoryDTO> competitionHistories = competitionRepository.findUserCompetitionRankings(userId);
-
-        // Map each CompetitionHistory to CompetitionHistoryDTO
-        return competitionHistories.stream()
-                .map(this::convertToDTO) // convert each entity to DTO
+        List<Object[]> rawResults = competitionRepository.findUserCompetitionRankingsRaw(userId);
+        return rawResults.stream()
+                .map(mapper::map)
                 .collect(Collectors.toList());
-    }
-
-    private CompetitionHistoryDTO convertToDTO(CompetitionHistoryDTO competitionHistory) {
-        // Map each field from CompetitionHistory to CompetitionHistoryDTO
-        return new CompetitionHistoryDTO(
-                competitionHistory.getCompetition_Id(),
-                competitionHistory.getCompetition_Date(),
-                competitionHistory.getUser_total_score(),
-                competitionHistory.getUser_rank()
-        );
     }
 
 }

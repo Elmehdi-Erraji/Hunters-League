@@ -16,6 +16,6 @@ public interface CompetitionRepository extends JpaRepository<Competition, UUID> 
     void deleteById(UUID id);
 
     @Query(nativeQuery = true, value = "SELECT * FROM get_user_competition_rankings(:userId)")
-    List<CompetitionHistoryDTO> findUserCompetitionRankings(@Param("userId") UUID userId);
+    List<Object[]> findUserCompetitionRankingsRaw(@Param("userId") UUID userId);
 }
 
