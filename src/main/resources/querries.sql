@@ -230,7 +230,7 @@ SELECT
     RankedScores.user_total_score,
     RankedScores.user_rank
 FROM RankedScores
-WHERE RankedScores.user_id = user_id  -- Fully qualify user_id here
+WHERE RankedScores.user_id = user_id
 ORDER BY RankedScores.competition_date DESC;
 END;
 $$ LANGUAGE plpgsql;
