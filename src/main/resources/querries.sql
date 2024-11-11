@@ -171,3 +171,66 @@ UPDATE participation
 SET score = ParticipationScores.calculated_score
     FROM ParticipationScores
 WHERE participation.id = ParticipationScores.participation_id;
+
+
+/*get the user historic about the competitions and the ranking of each one */
+WITH RankedScores AS (
+    SELECT
+        c.id AS competition_id,
+        c.date AS competition_date,
+        p.user_id,
+        SUM(p.score) AS user_total_score,
+        RANK() OVER(PARTITION BY c.id ORDER BY SUM(p.score) DESC) AS user_rank
+    FROM
+        participation p
+            JOIN
+        competition c ON p.competition_id = c.id
+    GROUP BY
+        c.id, c.date, p.user_id
+)
+SELECT
+    competition_id,
+    competition_date,
+    user_total_score,
+    user_rank
+FROM
+    RankedScores
+WHERE
+    user_id = '700b55e3-0a5e-4635-854c-01f11f78656a'
+ORDER BY
+    competition_date DESC;
+
+
+/*the stocked procedure for it */
+CREATE OR REPLACE FUNCTION get_user_competition_rankings(user_id UUID)
+    RETURNS TABLE(
+                     competition_id UUID,
+                     competition_date DATE,
+                     user_total_score NUMERIC,
+                     user_rank INTEGER
+                 ) AS $$
+BEGIN
+RETURN QUERY
+    WITH RankedScores AS (
+            SELECT
+                c.id AS competition_id,
+                c.date AS competition_date,
+                p.user_id,
+                SUM(p.score) AS user_total_score,
+                RANK() OVER(PARTITION BY c.id ORDER BY SUM(p.score) DESC) AS user_rank
+            FROM
+                participation p
+                    JOIN competition c ON p.competition_id = c.id
+            GROUP BY
+                c.id, c.date, p.user_id
+        )
+SELECT
+    RankedScores.competition_id,
+    RankedScores.competition_date,
+    RankedScores.user_total_score,
+    RankedScores.user_rank
+FROM RankedScores
+WHERE RankedScores.user_id = user_id  -- Fully qualify user_id here
+ORDER BY RankedScores.competition_date DESC;
+END;
+$$ LANGUAGE plpgsql;

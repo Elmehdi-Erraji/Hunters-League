@@ -28,4 +28,7 @@ public interface ParticipationRepository extends JpaRepository<Participation, In
             "WHERE p.competition.id = :competitionId " +
             "ORDER BY p.score DESC")
     List<PodiumDto> findTopThreeByCompetitionId(UUID competitionId, Pageable pageable);
+
+
+    List<Participation> findByUserId(UUID userId);
 }

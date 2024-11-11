@@ -1,6 +1,7 @@
 package com.spring.huntersleague.web.rest;
 
 import com.spring.huntersleague.domain.Competition;
+import com.spring.huntersleague.repository.dto.CompetitionHistoryDTO;
 import com.spring.huntersleague.repository.dto.PodiumDto;
 import com.spring.huntersleague.service.CompetitionService;
 import com.spring.huntersleague.web.vm.mapper.response.competition.CompetitionListMapper;
@@ -115,4 +116,11 @@ public class CompetitionController {
     public List<PodiumDto> getTopThreeParticipants(@PathVariable UUID competitionId) {
         return competitionService.getTopThreeParticipants(competitionId);
     }
+
+
+    @GetMapping("/rankings/{userId}")
+    public List<CompetitionHistoryDTO> getUserCompetitionRankings(@PathVariable UUID userId) {
+        return competitionService.getUserCompetitionRankings(userId);
+    }
+
 }
