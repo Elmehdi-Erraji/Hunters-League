@@ -22,3 +22,4 @@ spring:
       file: src/main/docker/compose.yml
       enabled: true
       lifecycle-management: start_only
+
