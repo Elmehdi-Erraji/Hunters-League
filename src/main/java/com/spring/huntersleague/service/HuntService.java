@@ -2,25 +2,22 @@ package com.spring.huntersleague.service;
 
 import com.spring.huntersleague.domain.Hunt;
 import com.spring.huntersleague.repository.HuntRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 @Service
 public class HuntService {
 
-
     private final HuntRepository huntRepository;
 
     public HuntService(HuntRepository huntRepository) {
         this.huntRepository = huntRepository;
     }
-
 
     public Hunt createHunt(Hunt hunt) {
         return huntRepository.save(hunt);

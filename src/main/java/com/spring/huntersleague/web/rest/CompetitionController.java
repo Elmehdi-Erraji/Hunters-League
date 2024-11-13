@@ -1,17 +1,24 @@
 package com.spring.huntersleague.web.rest;
 
 import com.spring.huntersleague.domain.Competition;
+import com.spring.huntersleague.repository.dto.CompetitionHistoryDTO;
+import com.spring.huntersleague.repository.dto.PodiumDto;
 import com.spring.huntersleague.service.CompetitionService;
 import com.spring.huntersleague.web.vm.mapper.response.competition.CompetitionListMapper;
 import com.spring.huntersleague.web.vm.mapper.response.competition.CompetitionMapper;
 import com.spring.huntersleague.web.vm.request.competition.CompetitionCreateVM;
+import com.spring.huntersleague.web.vm.request.competition.CompetitionRegisterVM;
 import com.spring.huntersleague.web.vm.request.competition.CompetitionUpdateVM;
 import com.spring.huntersleague.web.vm.mapper.request.competition.CompetitionCreateMapper;
 import com.spring.huntersleague.web.vm.mapper.request.competition.CompetitionUpdateMapper;
+import com.spring.huntersleague.web.vm.request.competition.ScoreSubmissionRequest;
 import com.spring.huntersleague.web.vm.response.competition.CompetitionDetailsVM;
 import com.spring.huntersleague.web.vm.response.competition.CompetitionListVM;
+import com.spring.huntersleague.web.vm.response.competition.CompetitionResultVM;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -77,4 +84,43 @@ public class CompetitionController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(competitions);
     }
+
+    @PostMapping("/register/{id}")
+    public ResponseEntity<String> registerForCompetition(@PathVariable UUID id, @Valid @RequestBody CompetitionRegisterVM registerVM) {
+        competitionService.registerMember(id, registerVM.getMemberID());
+        return ResponseEntity.ok("Member registered successfully.");
+    }
+
+    @PostMapping("/submitScores")
+    public ResponseEntity<String> submitScores(@RequestBody ScoreSubmissionRequest scoreSubmissionRequest) {
+
+        if (!competitionService.isJury(scoreSubmissionRequest.getJuryUserId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized: Only jury members can submit scores.");
+        }
+        competitionService.submitScores(scoreSubmissionRequest);
+        return ResponseEntity.ok("Scores recorded successfully.");
+    }
+
+
+    @GetMapping("/{userId}/competitionResults")
+    public ResponseEntity<List<CompetitionResultVM>> getCompetitionResults(@PathVariable UUID userId) {
+        List<CompetitionResultVM> results = competitionService.getCompetitionResults(userId);
+        if (results.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(results);
+        }
+        return ResponseEntity.ok(results);
+    }
+
+
+    @GetMapping("/{competitionId}/podium")
+    public List<PodiumDto> getTopThreeParticipants(@PathVariable UUID competitionId) {
+        return competitionService.getTopThreeParticipants(competitionId);
+    }
+
+
+    @GetMapping("/rankings/{userId}")
+    public List<CompetitionHistoryDTO> getUserCompetitionRankings(@PathVariable UUID userId) {
+        return competitionService.getUserCompetitionRankings(userId);
+    }
+
 }

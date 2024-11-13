@@ -5,6 +5,7 @@ import com.spring.huntersleague.repository.ParticipationRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -41,4 +42,9 @@ public class ParticipationService {
     public Page<Participation> findAll(Pageable pageable) {
         return participationRepository.findAll(pageable);
     }
+
+    public List<Participation> findParticipationsByUserOrderedByDate(UUID userId) {
+        return participationRepository.findByUserIdOrderByCompetitionDateDesc(userId);
+    }
+
 }
