@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
 @Service
-public class AuthService {
+public class AuthService implements AuthServiceInterface {
 
     private final AuthRepository authRepository;
 
@@ -21,6 +21,7 @@ public class AuthService {
         this.authRepository = authRepository;
     }
 
+    @Override
     public User register(User user) {
         if(user == null || user.getUsername() == null || user.getPassword() == null || user.getEmail() == null || user.getPassword().length() < 8 ) {
             throw new InvalidUserException("Invalid user");
@@ -31,6 +32,7 @@ public class AuthService {
         return authRepository.save(user);
     }
 
+    @Override
     public boolean login(User userLogin) {
         User user = authRepository.findByUsername(userLogin.getUsername())
                 .orElseThrow(() -> new UserNotFoundException("user not found."));
