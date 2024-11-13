@@ -31,7 +31,6 @@ class AuthServiceTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    // Tests for register method
     @Test
     void register_ShouldThrowInvalidUserException_WhenUserIsNull() {
         assertThrows(InvalidUserException.class, () -> authService.register(null));
@@ -77,7 +76,6 @@ class AuthServiceTest {
         verify(authRepository, times(1)).save(user);
     }
 
-    // Tests for login method
     @Test
     void login_ShouldThrowUserNotFoundException_WhenUserNotFound() {
         User userLogin = new User();
