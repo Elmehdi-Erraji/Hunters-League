@@ -1,46 +1,39 @@
-package com.spring.huntersleague.domain;
+package com.spring.huntersleague.web.vm.request.user;
 
-import com.spring.huntersleague.domain.enums.Role;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
-@Entity
 @Getter
 @Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
-@Table(name = "\"user\"")
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+@Data
+public class UserUpdateVM {
+
+    @NotNull(message = "ID is required")
     private UUID id;
 
     @NotBlank(message = "Username is required")
     private String username;
 
     @NotBlank(message = "Password is required")
-    @Size(min =8, message = "Password must be at least 8 characters")
+    @Size(min = 8, message = "Password must be at least 8 characters")
     @Pattern(
             regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$",
             message = "Password must contain at least one uppercase letter, one lowercase letter, and one digit"
     )
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
     @NotBlank(message = "First name is required")
     private String firstName;
 
     @NotBlank(message = "Last name is required")
     private String lastName;
+
+    @NotBlank(message = "User role is required")
+    private String role;
 
     @NotBlank(message = "CIN is required")
     private String cin;
@@ -51,13 +44,4 @@ public class User {
 
     @NotBlank(message = "Nationality is required")
     private String nationality;
-
-    @NotNull(message = "Join date is required")
-    private LocalDateTime joinDate;
-
-    private LocalDateTime licenseExpirationDate;
-
-    @OneToMany(mappedBy = "user")
-    private List<Participation> participations;
-
 }

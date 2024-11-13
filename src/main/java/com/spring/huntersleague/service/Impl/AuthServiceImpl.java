@@ -1,4 +1,4 @@
 package com.spring.huntersleague.service.Impl;
 
-public class UserServiceImp {
+public class AuthServiceImpl {
 }

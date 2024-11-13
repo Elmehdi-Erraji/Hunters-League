@@ -1,0 +1,18 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-indexes-on-hunt
+      author: Youcode
+      changes:
+        - createIndex:
+            tableName: species
+            indexName: idx_species_name
+            columns:
+              - column:
+                  name: name
+
+        - createIndex:
+            tableName: hunt
+            indexName: idx_hunt_species_id
+            columns:
+              - column:
+                  name: species_id
