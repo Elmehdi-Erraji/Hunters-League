@@ -2,45 +2,115 @@ package com.spring.huntersleague.service;
 
 import com.spring.huntersleague.domain.User;
 import com.spring.huntersleague.repository.AuthRepository;
+import com.spring.huntersleague.repository.TokenRepository;
+import com.spring.huntersleague.repository.UserRepository;
+import com.spring.huntersleague.service.dto.AuthenticationResponseDTO;
 import com.spring.huntersleague.service.dto.UserLoginDTO;
 import com.spring.huntersleague.service.dto.UserRegistrationDTO;
 import com.spring.huntersleague.web.errors.user.InvalidCredentialsException;
 import com.spring.huntersleague.web.errors.user.InvalidUserException;
 import com.spring.huntersleague.web.errors.user.UserNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
 @Service
-public class AuthService implements AuthServiceInterface {
+@RequiredArgsConstructor
+public class AuthService {
 
-    private final AuthRepository authRepository;
+    private final UserRepository repository;
+    private final TokenRepository tokenRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
 
-    public AuthService(AuthRepository authRepository) {
-        this.authRepository = authRepository;
+    public AuthenticationResponseDTO register(RegisterRequestDTO request) {
+        var user = User.builder()
+                .username(request.getUsername())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .role(request.getRole())
+                .build();
+        var savedUser = repository.save(user);
+        var jwtToken = jwtService.generateToken(user);
+        var refreshToken = jwtService.generateToken(user);
+        saveUserToken(savedUser, jwtToken);
+        return AuthenticationResponseDTO.builder()
+                .accessToken(jwtToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 
-    @Override
-    public User register(User user) {
-        if(user == null || user.getUsername() == null || user.getPassword() == null || user.getEmail() == null || user.getPassword().length() < 8 ) {
-            throw new InvalidUserException("Invalid user");
-        }
-        if(authRepository.existsByEmail(user.getEmail()) || authRepository.existsByUsername(user.getUsername())) {
-            throw new InvalidUserException("User already exists");
-        }
-        return authRepository.save(user);
+    public AuthenticationResponseDTO authenticate(AuthenticationRequestDTO request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
+        );
+        var user = repository.findByEmail(request.getEmail())
+                .orElseThrow();
+        var jwtToken = jwtService.generateToken(user);
+        var refreshToken = jwtService.generateToken(user);
+        revokeAllUserTokens(user);
+        saveUserToken(user, jwtToken);
+        return AuthenticationResponseDTO.builder()
+                .accessToken(jwtToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 
-    @Override
-    public boolean login(User userLogin) {
-        User user = authRepository.findByUsername(userLogin.getUsername())
-                .orElseThrow(() -> new UserNotFoundException("user not found."));
-
-        if(BCrypt.checkpw(userLogin.getPassword(), user.getPassword())) {
-            return true;
-        }else{
-            throw new InvalidCredentialsException("Invalid credentials.");
+    public void refreshToken(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws IOException {
+        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        final String refreshToken;
+        final String userEmail;
+        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
+            return;
         }
+        refreshToken = authHeader.substring(7);
+        userEmail = jwtService.extractUserName(refreshToken);
+        if (userEmail != null) {
+            var user = this.repository.findByEmail(userEmail)
+                    .orElseThrow();
+            if (jwtService.isTokenValid(refreshToken, user)) {
+                var accessToken = jwtService.generateToken(user);
+                revokeAllUserTokens(user);
+                saveUserToken(user, accessToken);
+                var authResponse = AuthenticationResponseDTO.builder()
+                        .accessToken(accessToken)
+                        .refreshToken(refreshToken)
+                        .build();
+                new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
+            }
+        }
+    }
+
+    public void saveUserToken(AppUser user, String jwtToken) {
+        var token = Token.builder()
+                .user(user)
+                .token(jwtToken)
+                .tokenType(TokenType.BEARER)
+                .expired(false)
+                .revoked(false)
+                .build();
+        tokenRepository.save(token);
+    }
+
+    public void revokeAllUserTokens(AppUser user) {
+        var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
+        if (validUserTokens.isEmpty())
+            return;
+        validUserTokens.forEach(token -> {
+            token.setExpired(true);
+            token.setRevoked(true);
+        });
+        tokenRepository.saveAll(validUserTokens);
     }
 }

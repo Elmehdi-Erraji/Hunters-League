@@ -1,5 +1,6 @@
 package com.spring.huntersleague.domain;
 
+import com.spring.huntersleague.domain.enums.Authority;
 import com.spring.huntersleague.domain.enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -9,6 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -68,8 +70,39 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        List<GrantedAuthority> authorities = new ArrayList<>();
+
+        // Assign role-based authorities
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + role.name()));
+
+        // Add specific authorities based on role
+        switch (role) {
+            case MEMBER:
+                authorities.add(new SimpleGrantedAuthority(Authority.CAN_PARTICIPATE.name()));
+                authorities.add(new SimpleGrantedAuthority(Authority.CAN_VIEW_RANKINGS.name()));
+                authorities.add(new SimpleGrantedAuthority(Authority.CAN_VIEW_COMPETITIONS.name()));
+                break;
+            case JURY:
+                authorities.add(new SimpleGrantedAuthority(Authority.CAN_SCORE.name()));
+                authorities.add(new SimpleGrantedAuthority(Authority.CAN_PARTICIPATE.name()));
+                authorities.add(new SimpleGrantedAuthority(Authority.CAN_VIEW_RANKINGS.name()));
+                authorities.add(new SimpleGrantedAuthority(Authority.CAN_VIEW_COMPETITIONS.name()));
+                break;
+            case ADMIN:
+                authorities.add(new SimpleGrantedAuthority(Authority.CAN_MANAGE_COMPETITIONS.name()));
+                authorities.add(new SimpleGrantedAuthority(Authority.CAN_MANAGE_USERS.name()));
+                authorities.add(new SimpleGrantedAuthority(Authority.CAN_MANAGE_SPECIES.name()));
+                authorities.add(new SimpleGrantedAuthority(Authority.CAN_MANAGE_SETTINGS.name()));
+                authorities.add(new SimpleGrantedAuthority(Authority.CAN_PARTICIPATE.name()));
+                authorities.add(new SimpleGrantedAuthority(Authority.CAN_VIEW_RANKINGS.name()));
+                authorities.add(new SimpleGrantedAuthority(Authority.CAN_VIEW_COMPETITIONS.name()));
+                authorities.add(new SimpleGrantedAuthority(Authority.CAN_SCORE.name()));
+                break;
+        }
+
+        return authorities;
     }
+
 
     @Override
     public boolean isAccountNonExpired() {
