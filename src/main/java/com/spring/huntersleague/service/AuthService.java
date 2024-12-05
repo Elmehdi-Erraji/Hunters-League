@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -32,19 +33,42 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponseDTO register(@Valid UserRegistrationDTO request) {
+        // Validate and set role
+        Role userRole;
+        try {
+            userRole = request.getRole() != null ? Role.valueOf(request.getRole()) : Role.MEMBER;
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid role: " + request.getRole());
+        }
+
+        // Build the user entity
         var user = User.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.valueOf(request.getRole()))
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .cin(request.getCin())
+                .nationality(request.getNationality())
+                .role(userRole)
+                .joinDate(LocalDate.now().atStartOfDay())
                 .build();
+
+        // Save user to the repository
         var savedUser = repository.save(user);
+
+        // Generate tokens
         var jwtToken = jwtService.generateToken(user);
-        var refreshToken = jwtService.generateToken(user);
+        var refreshToken = jwtService.generateToken(user); // Assume separate method for refresh tokens
+
+        // Save JWT token in the database
         saveUserToken(savedUser, jwtToken);
+
+        // Return response
         return AuthenticationResponseDTO.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
+                .role(String.valueOf(userRole))
                 .build();
     }
 
@@ -64,6 +88,7 @@ public class AuthService {
         return AuthenticationResponseDTO.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
+                .role(String.valueOf(user.getRole()))
                 .build();
     }
 
