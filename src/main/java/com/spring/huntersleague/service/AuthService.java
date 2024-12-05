@@ -1,22 +1,25 @@
 package com.spring.huntersleague.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.spring.huntersleague.domain.Token;
 import com.spring.huntersleague.domain.User;
-import com.spring.huntersleague.repository.AuthRepository;
+import com.spring.huntersleague.domain.enums.Role;
+import com.spring.huntersleague.domain.enums.TokenType;
 import com.spring.huntersleague.repository.TokenRepository;
 import com.spring.huntersleague.repository.UserRepository;
-import com.spring.huntersleague.service.dto.AuthenticationResponseDTO;
-import com.spring.huntersleague.service.dto.UserLoginDTO;
-import com.spring.huntersleague.service.dto.UserRegistrationDTO;
-import com.spring.huntersleague.web.errors.user.InvalidCredentialsException;
-import com.spring.huntersleague.web.errors.user.InvalidUserException;
-import com.spring.huntersleague.web.errors.user.UserNotFoundException;
+import com.spring.huntersleague.service.dto.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
@@ -28,12 +31,12 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationResponseDTO register(RegisterRequestDTO request) {
+    public AuthenticationResponseDTO register(@Valid UserRegistrationDTO request) {
         var user = User.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(request.getRole())
+                .role(Role.valueOf(request.getRole()))
                 .build();
         var savedUser = repository.save(user);
         var jwtToken = jwtService.generateToken(user);
@@ -48,16 +51,16 @@ public class AuthService {
     public AuthenticationResponseDTO authenticate(AuthenticationRequestDTO request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
+                        request.getUsername(),
                         request.getPassword()
                 )
         );
-        var user = repository.findByEmail(request.getEmail())
+        var user = repository.findByUsername(request.getUsername())
                 .orElseThrow();
-        var jwtToken = jwtService.generateToken(user);
-        var refreshToken = jwtService.generateToken(user);
-        revokeAllUserTokens(user);
-        saveUserToken(user, jwtToken);
+        var jwtToken = jwtService.generateToken((UserDetails) user);
+        var refreshToken = jwtService.generateToken((UserDetails) user);
+        revokeAllUserTokens((User) user);
+        saveUserToken((User) user, jwtToken);
         return AuthenticationResponseDTO.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
@@ -79,10 +82,10 @@ public class AuthService {
         if (userEmail != null) {
             var user = this.repository.findByEmail(userEmail)
                     .orElseThrow();
-            if (jwtService.isTokenValid(refreshToken, user)) {
-                var accessToken = jwtService.generateToken(user);
-                revokeAllUserTokens(user);
-                saveUserToken(user, accessToken);
+            if (jwtService.isTokenValid(refreshToken, (UserDetails) user)) {
+                var accessToken = jwtService.generateToken((UserDetails) user);
+                revokeAllUserTokens((User) user);
+                saveUserToken((User) user, accessToken);
                 var authResponse = AuthenticationResponseDTO.builder()
                         .accessToken(accessToken)
                         .refreshToken(refreshToken)
@@ -92,7 +95,7 @@ public class AuthService {
         }
     }
 
-    public void saveUserToken(AppUser user, String jwtToken) {
+    public void saveUserToken(User user, String jwtToken) {
         var token = Token.builder()
                 .user(user)
                 .token(jwtToken)
@@ -103,7 +106,7 @@ public class AuthService {
         tokenRepository.save(token);
     }
 
-    public void revokeAllUserTokens(AppUser user) {
+    public void revokeAllUserTokens(User user) {
         var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
         if (validUserTokens.isEmpty())
             return;
