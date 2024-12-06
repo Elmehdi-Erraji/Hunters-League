@@ -18,6 +18,7 @@ The **Hunter's League** backend is a robust system designed to modernize the man
 ## Tech Stack
 
 - **Spring Boot**: Backend framework for creating RESTful APIs.
+- **Spring Security**: Ensures robust authentication and role-based authorization.
 - **Database**: Managed in Docker containers for scalability and consistency.
 - **SonarQube**: Integrated for continuous quality and security analysis.
 - **Liquibase**: Ensures database version control and schema management.
@@ -42,6 +43,44 @@ The application follows a layered architecture:
 
 ---
 
+## Security: Roles and Permissions
+
+### Project Context
+
+In the Hunter's League project, ensuring robust security is essential to protect user data, rankings, and sensitive competition information. The solution guarantees reliable authentication and precise authorization control, considering the specific roles within the application.
+
+### Core Security Features
+
+- Development of a primary class named `USER`, responsible for managing users and their authorizations.
+
+### Application Roles and Permissions
+
+The available roles in the application are:
+
+#### MEMBER
+
+Standard user participating in competitions.
+- **CAN_PARTICIPATE**: Register for a competition.
+- **CAN_VIEW_RANKINGS**: View rankings.
+- **CAN_VIEW_COMPETITIONS**: View competition details.
+
+#### JURY
+
+Users with specific responsibilities related to competition management and evaluation.
+- All permissions of the MEMBER role.
+- **CAN_SCORE**: Assign scores to participants.
+
+#### ADMIN
+
+Supervisors with elevated privileges to manage the entire application.
+- All permissions of the MEMBER and JURY roles.
+- **CAN_MANAGE_COMPETITIONS**: Add or modify competition details.
+- **CAN_MANAGE_USERS**: Manage user accounts.
+- **CAN_MANAGE_SPECIES**: Add, update, or delete species information.
+- **CAN_MANAGE_SETTINGS**: Configure application settings.
+
+---
+
 ## API Endpoints
 
 ### Users
@@ -63,7 +102,6 @@ The application follows a layered architecture:
 
 ### Scoring Formula
 Score = Points_Associated + (Weight × Weight_Factor) × Difficulty_Factor
-
 
 ---
 
@@ -119,19 +157,23 @@ These strategies collectively ensure that the backend remains performant and rel
 2. Set up the database using Docker:
    ```bash
    docker-compose up -d
-   
+   ```
 3. Run the application:
-```
-mvn spring-boot:run
-```
+   ```bash
+   mvn spring-boot:run
+   ```
 4. Access API via http://localhost:8080
+
+---
 
 ## Testing
 
-- Postman Collection: Use the provided Postman collection for testing API endpoints.
-- Unit Tests: Execute all tests with:
-```
-mvn test
-```
+- **Postman Collection**: Use the provided Postman collection for testing API endpoints.
+- **Unit Tests**: Execute all tests with:
+   ```bash
+   mvn test
+   ```
+
+---
 
 #### Feel free to contribute or report issues to make Hunter's League even better! 🚀

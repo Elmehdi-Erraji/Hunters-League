@@ -1,5 +1,6 @@
 package com.spring.huntersleague.service.dto;
 
+import com.spring.huntersleague.domain.enums.Role;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,5 +33,7 @@ public class UserRegistrationDTO {
 
     @NotBlank(message = "Nationality is required")
     private String nationality;
+
+    private String role = String.valueOf(Role.MEMBER);
 
 }
