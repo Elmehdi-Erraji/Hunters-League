@@ -53,7 +53,6 @@ public class HuntController {
         return hunt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteHunt(@PathVariable UUID id) {
         huntService.deleteHunt(id);

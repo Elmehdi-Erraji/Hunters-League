@@ -85,8 +85,7 @@ public class UsersController {
     }
 
     @GetMapping("/search")
-    public List<UserListVM> searchUsers(@RequestParam(required = false) String username,
-                                        @RequestParam(required = false) String cin) {
+    public List<UserListVM> searchUsers(@RequestParam(required = false) String username,@RequestParam(required = false) String cin) {
         SearchCriteria criteria = new SearchCriteria(username, cin);
         Optional<List<User>> usersOpt = userService.searchUsers(criteria);
 

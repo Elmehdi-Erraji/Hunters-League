@@ -32,32 +32,24 @@ public class AuthController {
 
     private final AuthService authService;
 
-
     public AuthController(AuthService authService) {
         this.authService = authService;
 
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponseDTO> authenticate(
-            @RequestBody @Valid AuthenticationRequestDTO request
-    ) {
+    public ResponseEntity<AuthenticationResponseDTO> authenticate(@RequestBody @Valid AuthenticationRequestDTO request) {
         System.out.println(request);
         return ResponseEntity.ok(authService.authenticate(request));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponseDTO> register(
-            @RequestBody @Valid UserRegistrationDTO request
-    ) {
+    public ResponseEntity<AuthenticationResponseDTO> register( @RequestBody @Valid UserRegistrationDTO request) {
         return ResponseEntity.ok(authService.register(request));
     }
 
     @PostMapping("/refresh-token")
-    public void refreshToken(
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) throws IOException {
+    public void refreshToken(HttpServletRequest request,HttpServletResponse response) throws IOException {
         authService.refreshToken(request, response);
     }
 }

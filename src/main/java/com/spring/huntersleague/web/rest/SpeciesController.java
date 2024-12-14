@@ -46,6 +46,7 @@ public class SpeciesController {
         return ResponseEntity.ok("Species registered successfully with ID: " + createdSpeciesId);
     }
         @GetMapping("/{id}")
+
     public ResponseEntity<Species> getSpeciesById(@PathVariable UUID id) {
         Species species = speciesService.findById(id)
                 .orElseThrow(() -> new SpeciesNotFoundException("Species with ID not found"));
@@ -62,8 +63,6 @@ public class SpeciesController {
             return ResponseEntity.notFound().build();
         }
     }
-
-
 
     @PostMapping("/update/{id}")
     public ResponseEntity<String> update(@PathVariable UUID id, @Valid @RequestBody SpeciesUpdateVM speciesUpdateVM) {
