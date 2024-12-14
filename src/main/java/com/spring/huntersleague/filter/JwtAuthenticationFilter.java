@@ -2,6 +2,9 @@ package com.spring.huntersleague.filter;
 
 import com.spring.huntersleague.service.JwtService;
 import com.spring.huntersleague.repository.TokenRepository;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -61,12 +64,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);
+                } else {
+                    throw new Exception("Token is invalid or expired");
                 }
             }
-        } catch (Exception e) {
-            // Catch any exception (expired token, invalid token, etc.)
+        } catch (ExpiredJwtException e) {
+            // Handle expired JWT exception
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Unauthorized: Token is invalid or expired.");
+            response.getWriter().write("Unauthorized: Token is expired.");
+            return;  // Stop processing further
+        } catch (MalformedJwtException e) {
+            // Handle malformed JWT exception
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Unauthorized: Token is malformed.");
+            return;  // Stop processing further
+        } catch (SignatureException e) {
+            // Handle signature exception
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Unauthorized: Token signature is invalid.");
+            return;  // Stop processing further
+        } catch (Exception e) {
+            // Catch any other exception
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Unauthorized: Token is invalid.");
             return;  // Stop processing further
         }
 
