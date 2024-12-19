@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+  postgres:
+    container_name: samurai_db
+    image: 'postgres:latest'
+    environment:
+      - 'POSTGRES_DB=samurai'
+      - 'POSTGRES_PASSWORD=password'
+      - 'POSTGRES_USER=samurai'
+    volumes:
+      - C:\Users\Youcode\Desktop\pgdata:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'  # Exposes PostgreSQL to your local machine
+    networks:
+      - samurai_net
+  app:
+    image: 'hunters_league:latest'
+    build:
+      context: .
+    container_name: app
+    depends_on:
+      - postgres
+    environment:
+      - POSTGRES_USER=samurai
+      - POSTGRES_PASSWORD=password
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/samurai
+      - SPRING_DATASOURCE_USERNAME=samurai
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    ports:
+      - '8443:8080'  # Exposes your app on port 8443
+    networks:
+      - samurai_net
+networks:
+  samurai_net:
+    driver: bridge
+volumes:
+  postgres_data:
+    driver: local
