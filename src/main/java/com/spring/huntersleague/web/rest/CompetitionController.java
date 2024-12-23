@@ -37,9 +37,7 @@ public class CompetitionController {
     private final CompetitionListMapper competitionListMapper;
     private final CompetitionMapper competitionMapper;
 
-    public CompetitionController(CompetitionService competitionService,
-                                 CompetitionCreateMapper competitionCreateMapper,
-                                 CompetitionUpdateMapper competitionUpdateMapper, CompetitionListMapper competitionListMapper, CompetitionMapper competitionMapper)
+    public CompetitionController(CompetitionService competitionService,CompetitionCreateMapper competitionCreateMapper, CompetitionUpdateMapper competitionUpdateMapper, CompetitionListMapper competitionListMapper, CompetitionMapper competitionMapper)
     {
         this.competitionService = competitionService;
         this.competitionCreateMapper = competitionCreateMapper;
@@ -101,7 +99,6 @@ public class CompetitionController {
         return ResponseEntity.ok("Scores recorded successfully.");
     }
 
-
     @GetMapping("/{userId}/competitionResults")
     public ResponseEntity<List<CompetitionResultVM>> getCompetitionResults(@PathVariable UUID userId) {
         List<CompetitionResultVM> results = competitionService.getCompetitionResults(userId);
@@ -111,12 +108,10 @@ public class CompetitionController {
         return ResponseEntity.ok(results);
     }
 
-
     @GetMapping("/{competitionId}/podium")
     public List<PodiumDto> getTopThreeParticipants(@PathVariable UUID competitionId) {
         return competitionService.getTopThreeParticipants(competitionId);
     }
-
 
     @GetMapping("/rankings/{userId}")
     public List<CompetitionHistoryDTO> getUserCompetitionRankings(@PathVariable UUID userId) {
