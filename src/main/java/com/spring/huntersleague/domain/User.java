@@ -73,7 +73,7 @@ public class User implements UserDetails {
         List<GrantedAuthority> authorities = new ArrayList<>();
 
         // Assign role-based authorities
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + role.name()));
+        authorities.add(new SimpleGrantedAuthority(role.name()));
 
         // Add specific authorities based on role
         switch (role) {

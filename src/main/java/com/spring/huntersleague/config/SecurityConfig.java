@@ -28,34 +28,27 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
-                .authorizeHttpRequests(req ->
-                        req.requestMatchers(WHITE_LIST_URL).permitAll()
-                                .anyRequest()
-                                .authenticated()
+                .authorizeHttpRequests(req -> req
+                        .requestMatchers(WHITE_LIST_URL).permitAll() // Public endpoints
+                        .anyRequest().authenticated() // All other endpoints require authentication
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .logout(logout ->
-                        logout.logoutUrl("/api/auth")
-                                .addLogoutHandler((request, response, authentication) -> {
-                                    SecurityContextHolder.clearContext();
-                                })
-                )
-        ;
+                .logout(logout -> logout
+                        .logoutUrl("/api/auth/logout")
+                        .logoutSuccessHandler((request, response, authentication) ->
+                                SecurityContextHolder.clearContext())
+                );
 
         return http.build();
     }
 
-    /**
-     * Define the role hierarchy for the application.
-     */
     @Bean
     public RoleHierarchy roleHierarchy() {
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();

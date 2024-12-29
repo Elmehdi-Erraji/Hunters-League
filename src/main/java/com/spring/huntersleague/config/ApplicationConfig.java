@@ -19,12 +19,13 @@ import java.util.UUID;
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfig {
+
     private final UserRepository repository;
 
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> repository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username)); // Added username in error
     }
 
     @Bean
@@ -50,4 +51,3 @@ public class ApplicationConfig {
         return new BCryptPasswordEncoder();
     }
 }
-

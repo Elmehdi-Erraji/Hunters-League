@@ -1,5 +1,6 @@
 package com.spring.huntersleague.service;
 
+import com.spring.huntersleague.domain.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -37,12 +38,13 @@ public class JwtService {
 
 
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+        User user = (User) userDetails;
         return Jwts.builder()
-                .setClaims(extraClaims)
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
-                .signWith(getSigningKey() , SignatureAlgorithm.HS256)
+                .setSubject(user.getUsername())
+                .claim("role", user.getRole().toString()) // Add role claim
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 24 hours
+                .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
                 .compact();
     }
 

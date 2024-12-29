@@ -33,15 +33,20 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponseDTO register(@Valid UserRegistrationDTO request) {
-        // Validate and set role
-        Role userRole;
-        try {
-            userRole = request.getRole() != null ? Role.valueOf(request.getRole()) : Role.MEMBER;
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid role: " + request.getRole());
+        // Check if username or email already exists
+        if (repository.findByUsername(request.getUsername()).isPresent()) {
+            throw new IllegalStateException("Username already taken");
+        }
+        if (repository.findByEmail(request.getEmail()).isPresent()) {
+            throw new IllegalStateException("Email already registered");
         }
 
-        // Build the user entity
+        // Set default role without prefix
+        Role userRole = request.getRole() != null
+                ? Role.valueOf(request.getRole().toUpperCase())
+                : Role.MEMBER;
+
+        // Create new user
         var user = User.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
@@ -54,17 +59,12 @@ public class AuthService {
                 .joinDate(LocalDate.now().atStartOfDay())
                 .build();
 
-        // Save user to the repository
+        // Save user and tokens
         var savedUser = repository.save(user);
-
-        // Generate tokens
         var jwtToken = jwtService.generateToken(user);
-        var refreshToken = jwtService.generateToken(user); // Assume separate method for refresh tokens
-
-        // Save JWT token in the database
+        var refreshToken = jwtService.generateToken(user);
         saveUserToken(savedUser, jwtToken);
 
-        // Return response
         return AuthenticationResponseDTO.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
@@ -81,10 +81,10 @@ public class AuthService {
         );
         var user = repository.findByUsername(request.getUsername())
                 .orElseThrow();
-        var jwtToken = jwtService.generateToken((UserDetails) user);
-        var refreshToken = jwtService.generateToken((UserDetails) user);
-        revokeAllUserTokens((User) user);
-        saveUserToken((User) user, jwtToken);
+        var jwtToken = jwtService.generateToken(user);
+        var refreshToken = jwtService.generateToken(user);
+        revokeAllUserTokens(user);
+        saveUserToken(user, jwtToken);
         return AuthenticationResponseDTO.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
@@ -99,13 +99,13 @@ public class AuthService {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         final String refreshToken;
         final String userEmail;
-        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return;
         }
         refreshToken = authHeader.substring(7);
         userEmail = jwtService.extractUserName(refreshToken);
         if (userEmail != null) {
-            var user = this.repository.findByEmail(userEmail)
+            var user = repository.findByEmail(userEmail)
                     .orElseThrow();
             if (jwtService.isTokenValid(refreshToken, (UserDetails) user)) {
                 var accessToken = jwtService.generateToken((UserDetails) user);
