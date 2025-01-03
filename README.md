@@ -17,6 +17,7 @@ The **Hunter's League** backend is a robust system designed to modernize the man
 ---
 
 
+
 ## Tech Stack
 
 - **Spring Boot**: Backend framework for creating RESTful APIs.
