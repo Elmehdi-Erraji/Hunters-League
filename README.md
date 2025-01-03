@@ -2,6 +2,7 @@
 
 ## Overview
 
+
 The **Hunter's League** backend is a robust system designed to modernize the management of hunting competitions for a club located in Québec. With over **120 million rows** in the database, the system leverages advanced backend technologies to ensure high performance, scalability, and reliability.
 
 ### Key Features
