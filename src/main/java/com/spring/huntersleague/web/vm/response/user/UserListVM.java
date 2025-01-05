@@ -34,4 +34,9 @@ public class UserListVM {
 
     @NotBlank(message = "Nationality is required")
     private String nationality;
+
+    private int totalPages;
+    private long totalElements;
+    private int pageNumber;
+    private int pageSize;
 }

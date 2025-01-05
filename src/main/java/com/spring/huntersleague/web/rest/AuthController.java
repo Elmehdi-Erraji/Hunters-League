@@ -39,7 +39,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponseDTO> authenticate(@RequestBody @Valid AuthenticationRequestDTO request) {
-        System.out.println(request);
+
         return ResponseEntity.ok(authService.authenticate(request));
     }
 

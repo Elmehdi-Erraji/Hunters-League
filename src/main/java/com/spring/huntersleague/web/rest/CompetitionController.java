@@ -20,11 +20,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.objenesis.ObjenesisHelper;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -75,12 +74,19 @@ public class CompetitionController {
     }
 
     @GetMapping("/findAll")
-    public ResponseEntity<List<CompetitionListVM>> getAllCompetitions(Pageable pageable) {
+    public ResponseEntity<Map<String, Object>> getAllCompetitions(Pageable pageable) {
         Page<Competition> competitionPage = competitionService.findAll(pageable);
         List<CompetitionListVM> competitions = competitionPage.getContent().stream()
                 .map(competitionListMapper::toViewModel)
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(competitions);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("competitions", competitions);
+        response.put("totalPages", competitionPage.getTotalPages());
+        response.put("totalElements", competitionPage.getTotalElements());
+        response.put("pageNumber", competitionPage.getNumber());
+        response.put("pageSize", competitionPage.getSize());
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/register/{id}")
