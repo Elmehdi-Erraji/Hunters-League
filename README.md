@@ -5,13 +5,14 @@
 The **Hunter's League** backend is a robust system designed to modernize the management of hunting competitions for a club located in Québec. With over **120 million rows** in the database, the system leverages advanced backend technologies to ensure high performance, scalability, and reliability.
 
 ### Key Features
-
+ 
 - **Member Management:** Online registration, secure login, and personal profile management.
 - **Competition Management:** Organize, register, and manage weekly competitions.
 - **Species Database:** View, add, update, or delete species (fish, big game, birds) with their characteristics.
 - **Leaderboard & Results:** Automated scoring and real-time rankings.
 - **Historical Insights:** Members can view their competition history and performance trends.
 - **High Data Volume Management:** Efficient handling of massive datasets with advanced querying techniques.
+
 
 ---
 
