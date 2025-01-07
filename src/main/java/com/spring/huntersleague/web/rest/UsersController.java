@@ -9,6 +9,7 @@ import com.spring.huntersleague.web.vm.request.user.UserCreateVM;
 import com.spring.huntersleague.web.vm.request.user.UserUpdateVM;
 import com.spring.huntersleague.web.vm.mapper.request.user.UserCreateMapper;
 import com.spring.huntersleague.web.vm.mapper.request.user.UserUpdateMapper;
+import com.spring.huntersleague.web.vm.response.species.SpeciesListVM;
 import com.spring.huntersleague.web.vm.response.user.UserListVM;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -17,9 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.ResponseEntity.ok;
@@ -76,17 +75,25 @@ public class UsersController {
     }
 
     @GetMapping("/findAll")
-    public ResponseEntity<List<UserListVM>> getAllUsers(Pageable pageable) {
+    public ResponseEntity<Map<String, Object>> getAllUsers(Pageable pageable) {
         Page<User> userPage = userService.findAllUsers(pageable);
         List<UserListVM> users = userPage.getContent().stream()
                 .map(userListMapper::toViewModel)
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(users);
+
+        // Create response map
+        Map<String, Object> response = new HashMap<>();
+        response.put("users", users);
+        response.put("totalPages", userPage.getTotalPages());
+        response.put("totalElements", userPage.getTotalElements());
+        response.put("pageNumber", userPage.getNumber());
+        response.put("pageSize", userPage.getSize());
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/search")
-    public List<UserListVM> searchUsers(@RequestParam(required = false) String username,
-                                        @RequestParam(required = false) String cin) {
+    public List<UserListVM> searchUsers(@RequestParam(required = false) String username,@RequestParam(required = false) String cin) {
         SearchCriteria criteria = new SearchCriteria(username, cin);
         Optional<List<User>> usersOpt = userService.searchUsers(criteria);
 
