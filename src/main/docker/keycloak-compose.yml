@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: samurai
+      POSTGRES_USER: samurai
+      POSTGRES_PASSWORD: password
+      POSTGRES_INITDB_WELCOME_MSG: "Welcome to your PostgreSQL database"
+      POSTGRES_INITDB_ARGS: "--auth=md5"  # This will enable password authentication
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/samurai  # Use the correct DB name here
+      KC_DB_USERNAME: samurai  # Use the user defined in PostgreSQL
+      KC_DB_PASSWORD: password  # Use the password defined in PostgreSQL
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HEALTH_ENABLED: true
+      KC_METRICS_ENABLED: true
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    depends_on:
+      - postgres
+    command: start-dev
+
+volumes:
+  postgres_data:

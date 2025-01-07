@@ -46,6 +46,7 @@ public class SpeciesController {
         return ResponseEntity.ok("Species registered successfully with ID: " + createdSpeciesId);
     }
         @GetMapping("/{id}")
+
     public ResponseEntity<Species> getSpeciesById(@PathVariable UUID id) {
         Species species = speciesService.findById(id)
                 .orElseThrow(() -> new SpeciesNotFoundException("Species with ID not found"));
@@ -62,8 +63,6 @@ public class SpeciesController {
             return ResponseEntity.notFound().build();
         }
     }
-
-
 
     @PostMapping("/update/{id}")
     public ResponseEntity<String> update(@PathVariable UUID id, @Valid @RequestBody SpeciesUpdateVM speciesUpdateVM) {
@@ -83,12 +82,21 @@ public class SpeciesController {
             Page<Species> speciesPage = speciesService.findAll(pageable);
             List<Species> speciesVMList = speciesListMapper.toSpeciesVMList(speciesPage.getContent());
 
-            SpeciesListVM speciesListVM = new SpeciesListVM(speciesVMList);
+            // Create SpeciesListVM with pagination details
+            SpeciesListVM speciesListVM = new SpeciesListVM(
+                    speciesVMList,
+                    speciesPage.getTotalPages(),
+                    speciesPage.getTotalElements(),
+                    speciesPage.getNumber(),
+                    speciesPage.getSize()
+            );
+
             return ResponseEntity.ok(speciesListVM);
         } catch (Exception e) {
             System.err.println("Error occurred while fetching species: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
 
 }

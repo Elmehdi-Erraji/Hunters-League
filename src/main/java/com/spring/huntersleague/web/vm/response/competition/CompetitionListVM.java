@@ -35,4 +35,9 @@ public class CompetitionListVM {
     private Integer maxParticipants;
 
     private Boolean openRegistration;
+
+    private int totalPages;
+    private long totalElements;
+    private int pageNumber;
+    private int pageSize;
 }

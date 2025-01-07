@@ -44,7 +44,6 @@ public class ParticipationController {
         return ResponseEntity.ok(response);
     }
 
-
     @PostMapping("/update/{id}")
     public ResponseEntity<Participation> updateParticipation(@RequestBody ParticipationUpdateVM participationUpdateVM) {
         Participation participation = participationUpdateMapper.toEntity(participationUpdateVM);
