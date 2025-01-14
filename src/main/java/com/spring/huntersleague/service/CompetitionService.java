@@ -191,4 +191,8 @@ public class CompetitionService {
                 .collect(Collectors.toList());
     }
 
+    public Long count(){
+        return competitionRepository.count();
+    }
+
 }

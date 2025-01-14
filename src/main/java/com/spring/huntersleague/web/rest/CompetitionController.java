@@ -57,15 +57,22 @@ public class CompetitionController {
         return ResponseEntity.ok(competitionService.updateCompetition(competition));
     }
 
+//    @GetMapping("/find/{id}")
+//    public ResponseEntity<CompetitionDetailsVM> getCompetitionId(@PathVariable UUID id) {
+//        Optional<Competition> competition = competitionService.findById(id);
+//        return competition.map(comp -> {
+//            CompetitionDetailsVM vm = competitionMapper.toViewModel(comp);
+//            vm.setParticipantCount(comp.getParticipations() != null ? comp.getParticipations().size() : 0);
+//            return ResponseEntity.ok(vm);
+//        }).orElseGet(() -> ResponseEntity.notFound().build());
+//    }
+
     @GetMapping("/find/{id}")
-    public ResponseEntity<CompetitionDetailsVM> getCompetitionId(@PathVariable UUID id) {
+    public ResponseEntity<Competition> getCompetitionId(@PathVariable UUID id){
         Optional<Competition> competition = competitionService.findById(id);
-        return competition.map(comp -> {
-            CompetitionDetailsVM vm = competitionMapper.toViewModel(comp);
-            vm.setParticipantCount(comp.getParticipations() != null ? comp.getParticipations().size() : 0);
-            return ResponseEntity.ok(vm);
-        }).orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(competition.get());
     }
+
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteCompetition(@PathVariable UUID id) {

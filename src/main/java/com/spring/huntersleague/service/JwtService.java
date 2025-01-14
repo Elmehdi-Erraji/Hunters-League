@@ -41,7 +41,8 @@ public class JwtService {
         User user = (User) userDetails;
         return Jwts.builder()
                 .setSubject(user.getUsername())
-                .claim("role", user.getRole().toString()) // Add role claim
+                .claim("role", user.getRole().toString())
+                .claim("id", user.getId())// Add role claim
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 24 hours
                 .signWith(SignatureAlgorithm.HS512, SECRET_KEY)

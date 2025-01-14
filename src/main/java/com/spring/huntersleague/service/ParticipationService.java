@@ -47,4 +47,11 @@ public class ParticipationService {
         return participationRepository.findByUserIdOrderByCompetitionDateDesc(userId);
     }
 
+    public Page<Participation> findParticipationsForUser(UUID userId, Pageable pageable) {
+        return participationRepository.findByUserIdOrderByCompetitionDate(userId,pageable);
+    }
+
+    public Long count(){
+        return participationRepository.count();
+    }
 }

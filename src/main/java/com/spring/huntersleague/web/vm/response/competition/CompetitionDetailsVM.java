@@ -12,5 +12,9 @@ public class CompetitionDetailsVM {
     private UUID Id;
     private LocalDateTime date;
     private String location;
+
+
+
+
     private int participantCount;
 }

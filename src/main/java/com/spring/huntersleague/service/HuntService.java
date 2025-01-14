@@ -38,4 +38,9 @@ public class HuntService {
     public Page<Hunt> findAllHunts(Pageable pageable) {
         return huntRepository.findAll(pageable);
     }
+
+    public Long count(){
+        return huntRepository.count();
+    }
+
 }

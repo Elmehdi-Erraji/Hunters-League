@@ -1,5 +1,6 @@
 package com.spring.huntersleague.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.spring.huntersleague.domain.enums.SpeciesType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -33,6 +34,7 @@ public class Competition {
 
     private Boolean openRegistration;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "competition")
     private List<Participation> participations;
 

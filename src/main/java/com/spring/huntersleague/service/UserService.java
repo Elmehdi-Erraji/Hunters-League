@@ -77,4 +77,8 @@ public class UserService {
 
         return userMapper.toUserProfileDTO(user);
     }
+
+    public Long count(){
+        return userRepository.count();
+    }
 }

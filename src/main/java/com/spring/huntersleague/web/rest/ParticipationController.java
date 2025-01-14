@@ -9,6 +9,7 @@ import com.spring.huntersleague.web.vm.mapper.request.participation.Participatio
 import com.spring.huntersleague.web.vm.mapper.request.participation.ParticipationUpdateMapper;
 import com.spring.huntersleague.web.vm.response.participation.ParticipationListVM;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -72,4 +73,23 @@ public class ParticipationController {
 
         return ResponseEntity.ok(participations);
     }
+
+    @GetMapping("/findByUser/{id}")
+    public ResponseEntity<List<Participation>> findByUser(@PathVariable UUID id){
+        List<Participation> participations = participationService.findParticipationsByUserOrderedByDate(id);
+        return ResponseEntity.ok(participations);
+    }
+
+    @GetMapping("/findForUser/{id}")
+    public ResponseEntity<Page<Participation>> find(@PathVariable UUID id,@RequestParam(defaultValue = "0") int page,@RequestParam(defaultValue = "2") int size
+    ){
+        Pageable pageable = PageRequest.of(page,size);
+        Page<Participation> participations = participationService.findParticipationsForUser(id,pageable);
+
+        
+        return ResponseEntity.ok(participations);
+
+
+    }
+
 }
